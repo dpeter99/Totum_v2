@@ -6,7 +6,13 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
+        builder.AddServiceDefaults();
+            
         builder.Services.AddRazorPages();
+        builder.Services.AddCors(setup =>
+        {
+            setup.AddDefaultPolicy(policy => policy.AllowAnyOrigin());
+        });
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -18,7 +24,8 @@ internal static class HostingExtensions
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients)
-            .AddTestUsers(TestUsers.Users);
+            .AddTestUsers(TestUsers.Users)
+            ;
 
         return builder.Build();
     }
@@ -26,21 +33,24 @@ internal static class HostingExtensions
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
         app.UseSerilogRequestLogging();
-
+        
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
+
+            app.UseCors(config =>
+            {
+                config.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            });
         }
 
         app.UseStaticFiles();
         app.UseRouting();
-        
+            
         app.UseIdentityServer();
-        
-        app.UseAuthorization();
 
-        app.MapRazorPages()
-            .RequireAuthorization();
+        app.UseAuthorization();
+        app.MapRazorPages().RequireAuthorization();
 
         return app;
     }

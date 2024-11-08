@@ -29,8 +29,8 @@ public static class Config
                 ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
                 
                 AllowedGrantTypes = GrantTypes.Code,
-                RedirectUris = { "https://localhost:5002/signin-oidc" },
-                PostLogoutRedirectUris = { "https://localhost:5002/signout-callback-oidc" },
+                RedirectUris = { "http://localhost:5002/signin-oidc" },
+                PostLogoutRedirectUris = { "http://localhost:5002/signout-callback-oidc" },
                 
                 AllowedScopes =
                 {
@@ -38,5 +38,22 @@ public static class Config
                     IdentityServerConstants.StandardScopes.Profile,
                 }
             },
+            new Client
+            {
+                ClientId = "react-client",
+                ClientName = "React Client",
+                ClientSecrets = { new Secret("901564A5-E7FE-42CB-B10D-61EF6A8F3654".Sha256()) }, 
+                
+                AllowedGrantTypes = GrantTypes.Code,
+                RedirectUris = { "http://localhost:6001/oauth/callback" },
+                PostLogoutRedirectUris = { "http://localhost:6001/" },
+                
+                AllowedScopes =
+                {
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile,
+                    "api1"
+                }
+            }
         };
 }

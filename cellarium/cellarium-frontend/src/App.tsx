@@ -1,52 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import {getUser, logout, User} from '@/services/AuthService'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import UnAuthenticated from './pages/unauthenticated.page';
+import ProtectedRoute from './components/ProtectedRoute';
+import OAuthCallback from './pages/oauth-callback.page';
+import {getResources} from "@/services/Api.ts";
 
-
-// custom settings that work with our ouwn OAuth server
-const andreykaSettings = {
-    authority: 'https://localhost:5001',
-    client_id: 'react-client',
-    client_secret: '901564A5-E7FE-42CB-B10D-61EF6A8F3654',
-    redirect_uri: 'http://localhost:5003/oauth/callback',
-    silent_redirect_uri: 'http://localhost:5003/oauth/callback',
-    post_logout_redirect_uri: 'http://localhost:5003/',
-    response_type: 'code',
-    // this is for getting user.profile data, when open id connect is implemented
-    //scope: 'api1 openid profile'
-    // this is just for OAuth2 flow
-    scope: 'api1'
-};
-
-
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+type Weather = {
+    temperatureC: number;
+    summary: string;
 }
 
-export default App
+function App() {
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+
+    const [data, setData] = useState<Weather[]>([]);
+    
+    async function fetchData() {
+        const user = await getUser();
+        const accessToken = user?.access_token;
+        
+        setUser(user);
+        
+        if (accessToken) {
+            setIsAuthenticated(true);
+
+            const data = await getResources(accessToken);
+            setData(data);
+        }
+
+        setIsLoading(false);
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, [isAuthenticated]);
+
+    if (isLoading) {
+        return (<>Loading...</>)
+    }
+
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path={'/'} element={<UnAuthenticated authenticated={isAuthenticated} />} />
+
+                <Route path={'/resources'} element={
+                    <ProtectedRoute authenticated={isAuthenticated} redirectPath='/'>
+                        <span>Authenticated OAuth Server result:</span>
+                        <br/>
+                        {JSON.stringify(user)}
+                        <br/>
+                        <h1>{user?.profile.name}</h1>
+                        { data.map((w, i)=> (
+                            <li key={i}>{w.summary}: {w.temperatureC}</li>
+                        )) }
+                        <button onClick={logout}>Log out</button>
+                    </ProtectedRoute>
+                } />
+
+                <Route path='/oauth/callback' element={<OAuthCallback setIsAuthenticated={setIsAuthenticated} />} />
+            </Routes>
+        </BrowserRouter>
+    );
+}
+
+export default App;
