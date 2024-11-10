@@ -1,8 +1,16 @@
+using cellarium_backend;
+using cellarium_backend.Models;
+using cellarium_backend.Services.Auth;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
 builder.Services.AddCors();
+
+builder.Services.AddDbContext<CellariumDbContext>(options =>
+    options.UseInMemoryDatabase("cellarium"));
 
 builder.Services.AddAuthentication()
     .AddJwtBearer(options =>
@@ -20,6 +28,8 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
+builder.Services.AddSingleton<IUserService, UserService>();
+
 var app = builder.Build();
 
 app.UseCors(config =>
@@ -36,8 +46,10 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching", "Something"
 };
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/weatherforecast", (HttpContext context) =>
     {
+        
+        
         var forecast = Enumerable.Range(1, 5).Select(index =>
                 new WeatherForecast
                 (

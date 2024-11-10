@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import {getUser, logout, User} from '@/services/AuthService'
+import {getUser, logout, renewToken, User} from '@/services/AuthService'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import UnAuthenticated from './pages/unauthenticated.page';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -19,14 +19,17 @@ function App() {
     const [data, setData] = useState<Weather[]>([]);
     
     async function fetchData() {
-        const user = await getUser();
-        const accessToken = user?.access_token;
-        
+        let user = await getUser();
+        if(user?.expired){
+            user = await renewToken();
+        }
         setUser(user);
         
-        if (accessToken) {
+        if (user) {
+            
             setIsAuthenticated(true);
-
+            
+            const accessToken = user?.access_token;
             const data = await getResources(accessToken);
             setData(data);
         }
