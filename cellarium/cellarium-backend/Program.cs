@@ -28,6 +28,8 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddSingleton<IUserService, UserService>();
 
 var app = builder.Build();

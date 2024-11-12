@@ -1,72 +1,160 @@
-import { useEffect, useState } from 'react';
-import {getUser, logout, renewToken, User} from '@/services/AuthService'
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import UnAuthenticated from './pages/unauthenticated.page';
-import ProtectedRoute from './components/ProtectedRoute';
-import OAuthCallback from './pages/oauth-callback.page';
-import {getResources} from "@/services/Api.ts";
+import { BrowserRouter, Routes, Route, RouteProps, Outlet, Navigate } from "react-router-dom";
+import {AuthContextProps, AuthProvider, useAuth } from 'react-oidc-context';
+import {arachneConfig} from "@/config/auth.ts";
+
+import {asClass, asValue, AwilixContainer, createContainer } from "awilix/browser"
+import { createContext, useContext } from "react";
+import {ReactChildren} from "@/utils";
 
 type Weather = {
     temperatureC: number;
     summary: string;
 }
 
+export const Root = () => {
+    return(
+        <AuthProvider {...arachneConfig.settings}>
+            <App />
+        </AuthProvider>
+    )
+}
+
 function App() {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const auth = useAuth();
 
-    const [data, setData] = useState<Weather[]>([]);
+    switch (auth.activeNavigator) {
+        case "signinSilent":
+            return <div>Signing you in...</div>;
+        case "signoutRedirect":
+            return <div>Signing you out...</div>;
+    }
+
+    if (auth.isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (auth.error) {
+        return <div>Oops... {auth.error.message}</div>;
+    }
     
-    async function fetchData() {
-        let user = await getUser();
-        if(user?.expired){
-            user = await renewToken();
-        }
-        setUser(user);
-        
-        if (user) {
-            
-            setIsAuthenticated(true);
-            
-            const accessToken = user?.access_token;
-            const data = await getResources(accessToken);
-            setData(data);
-        }
-
-        setIsLoading(false);
-    }
-
-    useEffect(() => {
-        fetchData();
-    }, [isAuthenticated]);
-
-    if (isLoading) {
-        return (<>Loading...</>)
-    }
-
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path={'/'} element={<UnAuthenticated authenticated={isAuthenticated} />} />
+        <AppHostProvider>
+            <BrowserRouter>
+                <Routes>
+                    <Route index element={<LoginPage/>} />
+                    <Route path="/app" element={<Protected auth={auth}><Layout/></Protected>}>
+                        <Route index element={<Home/>}/>
+                        <Route path={'test'} element={<span>test</span>}/>
+                    </Route>
+                    <Route path={'/oauth/callback'} element={auth.isAuthenticated && auth.activeNavigator === undefined ? <Navigate to={'/'}/> : null}/>
+                </Routes>
+            </BrowserRouter>
+        </AppHostProvider>
+    );
+}
 
-                <Route path={'/resources'} element={
-                    <ProtectedRoute authenticated={isAuthenticated} redirectPath='/'>
-                        <span>Authenticated OAuth Server result:</span>
-                        <br/>
-                        {JSON.stringify(user)}
-                        <br/>
-                        <h1>{user?.profile.name}</h1>
-                        { data.map((w, i)=> (
-                            <li key={i}>{w.summary}: {w.temperatureC}</li>
-                        )) }
-                        <button onClick={logout}>Log out</button>
-                    </ProtectedRoute>
-                } />
+type AppHostCradle = {
+    UserService: UserService,
+    AuthProvider: AuthContextProps
+};
 
-                <Route path='/oauth/callback' element={<OAuthCallback setIsAuthenticated={setIsAuthenticated} />} />
-            </Routes>
-        </BrowserRouter>
+type AppHost = {
+    container: AwilixContainer<AppHostCradle>;
+}
+
+let appHostInstance: AppHost | null = null;
+
+class UserService {
+    private authService: AuthContextProps;
+    constructor(opts: AppHostCradle) {
+        this.authService = opts.AuthProvider;
+    }
+    
+    get userName() {
+        return this.authService.user?.profile.name ?? '';
+    }
+    
+    Logout() {
+        this.authService.removeUser();
+    }
+}
+
+const AppHostContext = createContext<AppHost>(null!)
+
+const AppHostProvider = ({children}: ReactChildren) => {
+    
+    const auth = useAuth();
+    
+    if(!appHostInstance){
+        const container = createContainer<AppHostCradle>({
+            strict: true,
+        });
+        
+        container.register('UserService', asClass(UserService));
+        container.register('AuthProvider', asValue(auth));
+        
+        appHostInstance = {
+            container,
+        };
+    }
+    
+    return (
+        <AppHostContext.Provider value={appHostInstance}>
+            {children}
+        </AppHostContext.Provider>
+    )
+}
+
+const useAppHost = () => {
+    return useContext(AppHostContext);
+}
+
+const useService = <K extends keyof AppHostCradle>(name: K): AppHostCradle[K] => {
+    const {container} = useAppHost();
+
+    return container.resolve(name);
+};
+
+
+type AuthRouteProps = {
+    auth: AuthContextProps
+} & RouteProps;
+
+const Protected = (props: AuthRouteProps) => {
+    return props.auth.isAuthenticated ? props.children : (<Navigate to="/" replace />);
+}
+
+const Layout = () => {
+    const userService = useService('UserService');
+        
+    return (
+      <div>
+          <div>
+              Header {userService.userName}
+              <button onClick={() => void userService.Logout()}>Log out</button>
+          </div>
+          <main>
+              <Outlet/>
+          </main>
+      </div>
+    )
+}
+
+const LoginPage = () => {
+    const auth = useAuth();
+    
+    if(auth.isAuthenticated){
+        return <Navigate to={'/app'}/>
+    }
+    
+    return <button onClick={() => void auth.signinRedirect()}>Log in</button>
+};
+
+function Home() {
+    return (
+        <div>
+            Home page
+        </div>
     );
 }
 

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 
 namespace cellarium_backend.Services.Auth;
 
-public class UserService(HttpContextAccessor httpContextAccessor)
+public class UserService(IHttpContextAccessor httpContextAccessor) : IUserService
 {
     
     
