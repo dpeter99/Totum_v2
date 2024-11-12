@@ -2,9 +2,11 @@ import { BrowserRouter, Routes, Route, RouteProps, Outlet, Navigate } from "reac
 import {AuthContextProps, AuthProvider, useAuth } from 'react-oidc-context';
 import {arachneConfig} from "@/config/auth.ts";
 
-import {asClass, asValue, AwilixContainer, createContainer } from "awilix/browser"
-import { createContext, useContext } from "react";
+import {asClass, asValue, AwilixContainer, createContainer, Lifetime } from "awilix/browser"
+import { createContext, useCallback, useContext, useSyncExternalStore } from "react";
 import {ReactChildren} from "@/utils";
+import {LiveData} from "@/lib/live-data/LiveData.ts";
+import {getResources} from "@/services/Api.ts";
 
 type Weather = {
     temperatureC: number;
@@ -55,7 +57,8 @@ function App() {
 
 type AppHostCradle = {
     UserService: UserService,
-    AuthProvider: AuthContextProps
+    AuthProvider: AuthContextProps,
+    WeatherApiService: WeatherApiService
 };
 
 type AppHost = {
@@ -63,21 +66,6 @@ type AppHost = {
 }
 
 let appHostInstance: AppHost | null = null;
-
-class UserService {
-    private authService: AuthContextProps;
-    constructor(opts: AppHostCradle) {
-        this.authService = opts.AuthProvider;
-    }
-    
-    get userName() {
-        return this.authService.user?.profile.name ?? '';
-    }
-    
-    Logout() {
-        this.authService.removeUser();
-    }
-}
 
 const AppHostContext = createContext<AppHost>(null!)
 
@@ -90,7 +78,8 @@ const AppHostProvider = ({children}: ReactChildren) => {
             strict: true,
         });
         
-        container.register('UserService', asClass(UserService));
+        container.register('UserService', asClass(UserService).setLifetime(Lifetime.SINGLETON));
+        container.register('WeatherApiService', asClass(WeatherApiService).setLifetime(Lifetime.SINGLETON));
         container.register('AuthProvider', asValue(auth));
         
         appHostInstance = {
@@ -114,6 +103,51 @@ const useService = <K extends keyof AppHostCradle>(name: K): AppHostCradle[K] =>
 
     return container.resolve(name);
 };
+
+
+const useData = <T,>(data: LiveData<T>) =>{
+    const subscribe = useCallback((s: () => void)=>data.subscribe(s), [data])
+    
+    return useSyncExternalStore<T>(subscribe, () => data.value);
+}
+
+
+
+class UserService {
+    private authService: AuthContextProps;
+    constructor(opts: AppHostCradle) {
+        this.authService = opts.AuthProvider;
+    }
+
+    get userName() {
+        return this.authService.user?.profile.name ?? '';
+    }
+
+    Logout() {
+        this.authService.removeUser();
+    }
+}
+
+class WeatherApiService {
+    private authService: AuthContextProps; 
+    constructor(opts: AppHostCradle) {
+        this.authService = opts.AuthProvider;
+    }
+    
+    public weather: LiveData<Weather[]> = new LiveData<Weather[]>([], ()=>this.getWeather());
+    
+    async getWeather(){
+        if(!this.authService.isAuthenticated)
+            return;
+        
+        const accessToken = this.authService.user!.access_token;
+        const data = await getResources(accessToken);
+        this.weather.setValue(data);
+    }
+    
+}
+
+
 
 
 type AuthRouteProps = {
@@ -151,9 +185,17 @@ const LoginPage = () => {
 };
 
 function Home() {
+    const weatherAPI = useService('WeatherApiService');
+    const weather = useData(weatherAPI.weather);
+    
     return (
         <div>
             Home page
+            {weather.map((w,i)=>(
+                <div key={i}>
+                    {w.summary} : {w.temperatureC}
+                </div>
+            ))}
         </div>
     );
 }
