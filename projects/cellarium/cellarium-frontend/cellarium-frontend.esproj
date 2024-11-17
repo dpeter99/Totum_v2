@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.128-alpha">
+    <PropertyGroup>
+        
+        <StartupCommand>pnpm run dev</StartupCommand>
+        <JavaScriptTestRoot>src\</JavaScriptTestRoot>
+        <JavaScriptTestFramework>Jest</JavaScriptTestFramework>
+        <!-- Allows the build (or compile) script located on package.json to run on Build -->
+        <ShouldRunBuildScript>false</ShouldRunBuildScript>
+        <ShouldRunNpmInstall>false</ShouldRunNpmInstall>
+        <!-- Folder where production build objects will be placed -->
+        <PublishAssetsDirectory>$(MSBuildProjectDirectory)\dist</PublishAssetsDirectory>
+    </PropertyGroup>
+    <ItemGroup>
+      <Script Include="tsconfig.json" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="src\lumin\style\mixins\" />
+    </ItemGroup>
+</Project>

@@ -1,0 +1,5 @@
+@use "@/lumin/style/mixins" as m;
+
+.Menu {
+  @include m.flex(column);
+}

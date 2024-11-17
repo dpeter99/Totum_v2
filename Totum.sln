@@ -1,20 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arachne", "Arachne\Arachne.csproj", "{650CB5F4-2417-4A06-8466-8B30A31F0197}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arachne", "projects\Arachne\Arachne.csproj", "{650CB5F4-2417-4A06-8466-8B30A31F0197}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAPI", "TestAPI\TestAPI.csproj", "{A7DEA2B9-3323-434B-8719-E9ACF1CB944C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAPI", "projects\TestAPI\TestAPI.csproj", "{A7DEA2B9-3323-434B-8719-E9ACF1CB944C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{B4BD04BC-EE8F-437F-B307-E29A691D20C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "projects\WebApplication1\WebApplication1.csproj", "{B4BD04BC-EE8F-437F-B307-E29A691D20C2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cellarium", "cellarium", "{2321ADBD-89B1-413F-AE82-4637B6479068}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cellarium", "projects\cellarium", "{2321ADBD-89B1-413F-AE82-4637B6479068}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "cellarium-frontend", "cellarium\cellarium-frontend\cellarium-frontend.esproj", "{07F5A310-4752-40A0-B07D-E9C8EB861718}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "cellarium-frontend", "projects\cellarium\cellarium-frontend\cellarium-frontend.esproj", "{07F5A310-4752-40A0-B07D-E9C8EB861718}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RootHost", "RootHost\RootHost.csproj", "{0036A7CD-6455-4A16-9580-03A2543F5070}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RootHost", "projects\RootHost\RootHost.csproj", "{0036A7CD-6455-4A16-9580-03A2543F5070}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RootHost.ServiceDefaults", "RootHost.ServiceDefaults\RootHost.ServiceDefaults.csproj", "{AE4671A0-D30F-443E-8D20-B3EDC501612A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RootHost.ServiceDefaults", "projects\RootHost.ServiceDefaults\RootHost.ServiceDefaults.csproj", "{AE4671A0-D30F-443E-8D20-B3EDC501612A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cellarium-backend", "cellarium\cellarium-backend\cellarium-backend.csproj", "{77E38A7E-7BBE-4D9C-A861-3363B3D653DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cellarium-backend", "projects\cellarium\cellarium-backend\cellarium-backend.csproj", "{77E38A7E-7BBE-4D9C-A861-3363B3D653DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

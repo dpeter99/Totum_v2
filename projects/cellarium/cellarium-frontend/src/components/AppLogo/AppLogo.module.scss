@@ -1,0 +1,8 @@
+
+@use "@/lumin/style/mixins";
+
+.appLogo {
+  @include mixins.flex(row, $align: center);
+  padding-inline-end: 12px;
+  padding-inline-start: 12px;
+}

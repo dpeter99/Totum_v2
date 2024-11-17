@@ -1,0 +1,24 @@
+
+@use "../../style/mixins";
+
+.lumix_header{
+    @include mixins.flex(row, $justify: between);
+
+
+    width: 100%;
+    background-color: white;
+
+    box-shadow: 0 -6px 10px 5px rgba(0,0,0,0.5);;
+
+    height: 4rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+
+    .header-section {
+        padding-inline: 1rem;
+    }
+}
+
+
+
+

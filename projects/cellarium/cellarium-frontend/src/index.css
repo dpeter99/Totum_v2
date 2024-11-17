@@ -1,0 +1,9 @@
+@import "lumin/style/index.scss";
+
+body {
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
