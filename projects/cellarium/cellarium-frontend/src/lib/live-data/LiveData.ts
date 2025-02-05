@@ -7,8 +7,8 @@ export class LiveData<T> {
     observers: Observer<T>[] = []
     
     constructor(initialValue: T,
-                private onActive?: ()=>void,
-                private onInactive?: ()=>void) {
+                private readonly onActive?: ()=>void,
+                private readonly onInactive?: ()=>void) {
         this.value = initialValue;
     }
 
@@ -19,7 +19,7 @@ export class LiveData<T> {
         // Trigger onActive if first one subscribed
         this.onActive && this.observers.length === 1 && this.onActive();// eslint-disable-line no-unused-expressions
 
-        // Immediatly notify of current value
+        // Immediately notify of current value
         (this.value !== undefined) && observer(this.value, undefined)// eslint-disable-line no-unused-expressions
 
         // Unsubscribe

@@ -1,14 +1,5 @@
+import {ShoppingListItem} from "@/model/ShoppingListItem.ts";
 
-type Brand<T, B extends string> = T &
-    {
-        readonly __brand: B;
-    };
-
-export type ShoppingListItemID = Brand<string, 'ShoppingListItemID'> 
-export type ShoppingListItem = {
-    id: ShoppingListItemID,
-    title: string,
-}
 
 export class ShoppingListItemService {
     

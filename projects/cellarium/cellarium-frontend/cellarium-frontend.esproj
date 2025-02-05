@@ -9,6 +9,8 @@
         <ShouldRunNpmInstall>false</ShouldRunNpmInstall>
         <!-- Folder where production build objects will be placed -->
         <PublishAssetsDirectory>$(MSBuildProjectDirectory)\dist</PublishAssetsDirectory>
+        <Configurations>Debug</Configurations>
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
     <ItemGroup>
       <Script Include="tsconfig.json" />

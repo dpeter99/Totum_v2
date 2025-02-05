@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RootHost.ServiceDefaults", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cellarium-backend", "projects\cellarium\cellarium-backend\cellarium-backend.csproj", "{77E38A7E-7BBE-4D9C-A861-3363B3D653DF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cellarium-backend.Tests", "projects\cellarium\cellarium-backend.Tests\cellarium-backend.Tests.csproj", "{3DD932BC-59F1-4523-BB45-3C275E6E9360}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,9 +52,14 @@ Global
 		{77E38A7E-7BBE-4D9C-A861-3363B3D653DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77E38A7E-7BBE-4D9C-A861-3363B3D653DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77E38A7E-7BBE-4D9C-A861-3363B3D653DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DD932BC-59F1-4523-BB45-3C275E6E9360}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DD932BC-59F1-4523-BB45-3C275E6E9360}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DD932BC-59F1-4523-BB45-3C275E6E9360}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DD932BC-59F1-4523-BB45-3C275E6E9360}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{07F5A310-4752-40A0-B07D-E9C8EB861718} = {2321ADBD-89B1-413F-AE82-4637B6479068}
 		{77E38A7E-7BBE-4D9C-A861-3363B3D653DF} = {2321ADBD-89B1-413F-AE82-4637B6479068}
+		{3DD932BC-59F1-4523-BB45-3C275E6E9360} = {2321ADBD-89B1-413F-AE82-4637B6479068}
 	EndGlobalSection
 EndGlobal

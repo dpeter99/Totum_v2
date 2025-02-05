@@ -1,0 +1,86 @@
+openapi: 3.1.0
+info:
+  title: Title
+  description: Title
+  version: 1.0.0
+servers:
+  - url: 'https://localhost:8080'
+paths:
+  /shopping-list:
+    get:
+      summary: Get all shopping lists from the user
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingList'
+  /shopping-list/{id}:
+    get:
+      summary: Get a specific shopping list
+      responses: 
+        '200':
+          description: Success
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ShoppingListWithItems'
+    put: 
+      summary: "Creates a new shipping list for the user"
+      requestBody: 
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/ShoppingList'
+      responses: 
+        '200':
+          description: 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingList'
+    delete:
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingList'
+components: 
+  schemas:
+    ID:
+      type: string
+      format: uuid
+      example: "A47445A3-93D6-4BBB-AFD9-2BAE5BEFE338"
+      readOnly: true
+    ShoppingList:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/ID"
+        name:
+          type: string
+          example: "My shopping list"
+    ShoppingListItem:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/ID"
+        value:
+          type: string
+          example: "Milk"
+        creation-date:
+          type: string
+          format: date-time
+    ShoppingListWithItems:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ShoppingList'
+        - type: object
+          properties: 
+            items:
+              type: array
+              oneOf:
+                - $ref: '#/components/schemas/ShoppingListItem'
