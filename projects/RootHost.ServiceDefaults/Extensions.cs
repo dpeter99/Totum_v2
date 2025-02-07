@@ -1,3 +1,4 @@
+using System.Reflection;
 using MartinCostello.OpenApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -50,10 +51,29 @@ public static class Extensions
                 document.Info.Contact = new OpenApiContact()
                 {
                     Name = "dpeter99",
-                    Email = "dpeter99",
                 };
                 document.Info.Description = "API";
+                document.Servers = new List<OpenApiServer>()
+                {
+                    new OpenApiServer()
+                    {
+                        Url = context.ApplicationServices.GetService<IHostEnvironment>()?.ContentRootPath,
+                    }
+                };
                 
+                return Task.CompletedTask;
+            });
+
+            options.AddSchemaTransformer((document, context, token) =>
+            {
+                var customAttributeProvider = context.JsonPropertyInfo?.AttributeProvider;
+                if(customAttributeProvider != null &&
+                   customAttributeProvider.IsDefined(typeof(BrandedTypeAttribute), false))
+                {
+                    var attribute = customAttributeProvider.GetCustomAttributes(typeof(BrandedTypeAttribute), false)
+                        .OfType<BrandedTypeAttribute>().First();
+                    document.Format = $"brand::{attribute.Brand}";
+                }
                 return Task.CompletedTask;
             });
         });
