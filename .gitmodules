@@ -1,0 +1,3 @@
+[submodule "projects/tools/openapi-ts"]
+	path = projects/tools/openapi-ts
+	url = git@github.com:dpeter99/openapi-ts.git
