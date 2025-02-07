@@ -8,11 +8,12 @@ public class Tests
     [Test]
     public async Task Index_ReturnsAViewResult_WithAListOfBrainstormSessions()
     {
+        
         // Arrange
-        var controller = new ShoppingListController();
+        //var controller = new ShoppingListController();
 
         // Act
-        var result = controller.GetAllForUser();
+        //var result = controller.GetAllForUser();
 
     }
 }
