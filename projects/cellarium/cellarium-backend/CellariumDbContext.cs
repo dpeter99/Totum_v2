@@ -9,7 +9,7 @@ public class CellariumDbContext: DbContext
     
     public DbSet<User> Users { get; set; }
     
-    public DbSet<ShoppingListItem> ShoppingListItems { get; set; }
+    public DbSet<ShoppingList?> ShoppingList { get; set; }
     
     public CellariumDbContext(DbContextOptions options) : base(options)
     {

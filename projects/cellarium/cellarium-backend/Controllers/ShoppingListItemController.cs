@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using cellarium_backend;
 using cellarium_backend.Dto;
 using cellarium_backend.Models;
-
+/*
 namespace cellarium_backend.Controllers
 {
-    [Route("api/shopping-list/item")]
-    [ApiController]
+    //[Route("api/shopping-list/item")]
+    //[ApiController]
     public class ShoppingListItemController(CellariumDbContext context) : ControllerBase
     {
         // GET: api/ShoppinListItemC
@@ -70,7 +70,7 @@ namespace cellarium_backend.Controllers
         // POST: api/ShoppinListItemC
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ShoppingListItem>> PostShoppingListItem(ShoppingListItemCreation createInfo)
+        public async Task<ActionResult<ShoppingListItem>> PostShoppingListItem(ShoppingListItemCreationDto createInfo)
         {
             var newItem = context.ShoppingListItems.Add(ShoppingListItem.FromDto(createInfo));
             await context.SaveChangesAsync();
@@ -100,3 +100,4 @@ namespace cellarium_backend.Controllers
         }
     }
 }
+*/

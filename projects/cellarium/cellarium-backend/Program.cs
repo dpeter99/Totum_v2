@@ -1,5 +1,6 @@
 using cellarium_backend;
 using cellarium_backend.Models;
+using cellarium_backend.Services;
 using cellarium_backend.Services.Auth;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,6 +34,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddTransient<IShoppingListService, ShoppingListService>();
 
 var app = builder.Build();
 

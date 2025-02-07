@@ -6,14 +6,5 @@ public class ShoppingListItem
 {
     public Guid Id { get; set; }
     
-    public string Title { get; set; }
-
-    public static ShoppingListItem FromDto(ShoppingListItemCreation create)
-    {
-        return new ShoppingListItem()
-        {
-            Id = Guid.CreateVersion7(),
-            Title = create.Title,
-        };
-    }
+    public string Name { get; set; }
 }
