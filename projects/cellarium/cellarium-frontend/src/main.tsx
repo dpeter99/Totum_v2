@@ -4,6 +4,9 @@ import {DevSupport} from "@react-buddy/ide-toolbox";
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
+
+import '@/config/api-client.ts';
+
 import {Root} from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(

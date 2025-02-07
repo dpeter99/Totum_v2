@@ -1,9 +1,7 @@
 import {makeField_string, ObjectMeta} from "@/lib/metadata/metadata.ts";
+import {Brand} from "@/utils";
 
-type Brand<T, B extends string> = T &
-    {
-        readonly __brand: B;
-    };
+
 
 export type ShoppingListItemID = Brand<string, 'ShoppingListItemID'>
 export type ShoppingListItem = {

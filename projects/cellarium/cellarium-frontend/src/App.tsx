@@ -3,7 +3,7 @@ import {AuthContextProps, AuthProvider, useAuth} from 'react-oidc-context';
 import {arachneConfig} from "@/config/auth.ts";
 
 import {asClass, asValue, Lifetime} from "awilix/browser"
-import {ShoppingListItemService} from "@/services/ShoppingListItemService.ts";
+import {ShoppingListService} from "@/services/ShoppingListService.ts";
 import {AppHost} from "@/lib/app-host";
 import {Layout} from "@/pages/Layout";
 import {LoginPage} from "@/pages/Login/Login.page.tsx";
@@ -25,9 +25,7 @@ export const Root = () => {
 export type Services = {
     UserService: UserService,
     AuthProvider: AuthContextProps,
-    WeatherApiService: WeatherApiService,
-
-    ShoppingListItemService: ShoppingListItemService
+    ShoppingListService: ShoppingListService
 };
 
 export const host = new AppHost<Services>();
@@ -55,7 +53,7 @@ function App() {
         container.register('WeatherApiService', asClass(WeatherApiService).setLifetime(Lifetime.SINGLETON));
         container.register('AuthProvider', asValue(auth));
 
-        container.register('ShoppingListItemService', asClass(ShoppingListItemService))
+        container.register('ShoppingListService', asClass(ShoppingListService).setLifetime(Lifetime.TRANSIENT));
     })
     
     return (

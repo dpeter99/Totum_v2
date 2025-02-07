@@ -16,6 +16,16 @@
       <Script Include="tsconfig.json" />
     </ItemGroup>
     <ItemGroup>
+      <Folder Include="src\api\" />
       <Folder Include="src\lumin\style\mixins\" />
     </ItemGroup>
+    
+    <ItemGroup>
+        
+    </ItemGroup>
+    
+    <Target Name="Generate Api" BeforeTargets="Build" Outputs="$(ProjectDirectory)/src/api" Inputs="$(ProjectDirectory)/../cellarium-backend/cellarium-backend.json">
+        <Exec Command="just generate-api" WorkingDirectory="$(ProjectDirectory)"/>
+    </Target>
+    
 </Project>
