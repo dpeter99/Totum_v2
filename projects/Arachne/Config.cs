@@ -15,7 +15,7 @@ public static class Config
     public static IEnumerable<ApiScope> ApiScopes =>
         new ApiScope[]
         {
-            new ApiScope(name: "api1", displayName: "API 1"),
+            new ApiScope(name: "cellarium", displayName: "Cellarium API"),
         };
 
     public static IEnumerable<Client> Clients =>
@@ -40,19 +40,19 @@ public static class Config
             },
             new Client
             {
-                ClientId = "react-client",
-                ClientName = "React Client",
+                ClientId = "cellarium-client",
+                ClientName = "Cellarium Client",
                 ClientSecrets = { new Secret("901564A5-E7FE-42CB-B10D-61EF6A8F3654".Sha256()) }, 
                 
-                AllowedGrantTypes = GrantTypes.Code,
-                RedirectUris = { "http://localhost:6001/oauth/callback" },
+                AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                RedirectUris = { "http://localhost:6001/oauth/callback", "https://localhost:5002/scalar/v1" },
                 PostLogoutRedirectUris = { "http://localhost:6001/" },
                 
                 AllowedScopes =
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
-                    "api1"
+                    "cellarium"
                 }
             }
         };

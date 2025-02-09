@@ -11,6 +11,7 @@ import {Home} from "@/pages/Home/Home.page.tsx";
 import {UserService} from "@/services/UserService.ts";
 import {WeatherApiService} from "@/services/WeatherApiService.ts";
 import {ShoppingListPage} from "@/pages/ShopingList/ShoppingList.page.tsx";
+import {client} from "@/api/client.gen.ts";
 
 
 
@@ -47,6 +48,11 @@ function App() {
     if (auth.error) {
         return <div>Oops... {auth.error.message}</div>;
     }
+    
+    client.setConfig({
+        baseUrl: 'https://localhost:5002/',
+        auth: auth.user?.access_token ?? ""    
+    })
 
     host.init((container) => {
         container.register('UserService', asClass(UserService).setLifetime(Lifetime.SINGLETON));

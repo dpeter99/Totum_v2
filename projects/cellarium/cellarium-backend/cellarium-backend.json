@@ -316,8 +316,28 @@
           }
         }
       }
+    },
+    "securitySchemes": {
+      "UserAuth": {
+        "type": "oauth2",
+        "description": "Bearer authentication using a JWT.",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://localhost:5001/connect/authorize",
+            "tokenUrl": "https://localhost:5001/connect/token",
+            "scopes": {
+              "cellarium": "cellarium"
+            }
+          }
+        }
+      }
     }
   },
+  "security": [
+    {
+      "UserAuth": [ ]
+    }
+  ],
   "tags": [
     {
       "name": "ShoppingList"

@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.ServiceDiscovery;
+using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
@@ -46,6 +47,7 @@ public static class Extensions
     {
         builder.Services.AddOpenApi(options =>
         {
+            options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
             options.AddDocumentTransformer((document, context, token) =>
             {
                 document.Info.Contact = new OpenApiContact()
@@ -60,6 +62,38 @@ public static class Extensions
                         Url = context.ApplicationServices.GetService<IHostEnvironment>()?.ContentRootPath,
                     }
                 };
+                
+                // Configure bearer authentication using a JWT
+                var scheme = new OpenApiSecurityScheme()
+                {
+                    BearerFormat = "JSON Web Token",
+                    Description = "Bearer authentication using a JWT.",
+                    Type = SecuritySchemeType.OAuth2,
+                    Scheme = "code",
+                    Flows = new OpenApiOAuthFlows()
+                    {
+                         AuthorizationCode = new OpenApiOAuthFlow()
+                        {
+                            AuthorizationUrl = new Uri("https://localhost:5001/connect/authorize"),
+                            TokenUrl = new Uri("https://localhost:5001/connect/token"),
+                            Scopes = new Dictionary<string, string>()
+                            {
+                                { "cellarium", "cellarium" },
+                            },
+                        }
+                    },
+                    Reference = new()
+                    {
+                        Id = "UserAuth",
+                        Type = ReferenceType.SecurityScheme,
+                    },
+                };
+
+                document.Components ??= new();
+                document.Components.SecuritySchemes ??= new Dictionary<string, OpenApiSecurityScheme>();
+                document.Components.SecuritySchemes[scheme.Reference.Id] = scheme;
+                document.SecurityRequirements ??= [];
+                document.SecurityRequirements.Add(new() { [scheme] = [] });
                 
                 return Task.CompletedTask;
             });
@@ -144,13 +178,14 @@ public static class Extensions
         if (app.Environment.IsDevelopment())
         {
             // All health checks must pass for app to be considered ready to accept traffic after starting
-            app.MapHealthChecks("/health");
+            app.MapHealthChecks("/health")
+                .AllowAnonymous();
 
             // Only health checks tagged with the "live" tag must pass for app to be considered alive
             app.MapHealthChecks("/alive", new HealthCheckOptions
             {
                 Predicate = r => r.Tags.Contains("live")
-            });
+            }).AllowAnonymous();
 
             app.AddOpenApi();
         }
@@ -160,8 +195,19 @@ public static class Extensions
 
     public static WebApplication AddOpenApi(this WebApplication app)
     {
-        app.MapOpenApi();
-        app.MapScalarApiReference();
+        app.MapOpenApi().AllowAnonymous();
+        app.MapScalarApiReference(options =>
+        {
+            options.Authentication ??= new();
+            options.Authentication.OAuth2 = new()
+            {
+                ClientId = "cellarium-client",
+                Scopes = new []
+                {
+                    "cellarium",
+                }
+            };
+        }).AllowAnonymous();
         
         return app;
     }

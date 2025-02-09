@@ -1,5 +1,4 @@
 using cellarium_backend.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace cellarium_backend;

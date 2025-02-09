@@ -4,5 +4,5 @@ namespace cellarium_backend.Services.Auth;
 
 public interface IUserService
 {
-    public Task<User> GetUser();
+    public Task<User> GetUser(HttpContext context);
 }

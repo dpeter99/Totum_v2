@@ -1,6 +1,6 @@
 import {LiveData} from "@/lib/live-data/LiveData.ts";
 import {ShoppingList} from "@/model/ShoppingList.ts";
-import {ShoppingListApi} from "@/api";
+import {ShoppingListApi, ShoppingListCreationDto} from "@/api";
 
 
 
@@ -12,6 +12,13 @@ export class ShoppingListService {
     this.shoppingLists.setValue(data.data!);
   });
   
+  public async createShoppingList (data: ShoppingListCreationDto) {
+    let res = await ShoppingListApi.createShoppingList({body:data});
+    if(res.response.ok && res.data) {
+      let newItem = ShoppingList.fromDto(res.data);
+      this.shoppingLists.transition((l)=>[...l, newItem]);
+    }
+  }
   
   
 }

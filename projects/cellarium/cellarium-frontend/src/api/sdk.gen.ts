@@ -20,6 +20,12 @@ export class ShoppingListApi {
      */
     public static getShoppingLists<ThrowOnError extends boolean = false>(options?: Options<GetShoppingListsData, ThrowOnError>) {
         return (options?.client ?? _heyApiClient).get<GetShoppingListsResponse, unknown, ThrowOnError>({
+            security: [
+                {
+                    scheme: 'bearer',
+                    type: 'http'
+                }
+            ],
             url: '/api/shopping-list',
             ...options
         });
@@ -31,6 +37,12 @@ export class ShoppingListApi {
      */
     public static createShoppingList<ThrowOnError extends boolean = false>(options: Options<CreateShoppingListData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).post<CreateShoppingListResponse, unknown, ThrowOnError>({
+            security: [
+                {
+                    scheme: 'bearer',
+                    type: 'http'
+                }
+            ],
             url: '/api/shopping-list',
             ...options,
             headers: {
@@ -42,6 +54,12 @@ export class ShoppingListApi {
     
     public static deleteApiShoppingListById<ThrowOnError extends boolean = false>(options: Options<DeleteApiShoppingListByIdData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).delete<unknown, unknown, ThrowOnError>({
+            security: [
+                {
+                    scheme: 'bearer',
+                    type: 'http'
+                }
+            ],
             url: '/api/shopping-list/{id}',
             ...options
         });
@@ -53,6 +71,12 @@ export class ShoppingListApi {
      */
     public static getShoppingList<ThrowOnError extends boolean = false>(options: Options<GetShoppingListData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).get<GetShoppingListResponse, GetShoppingListError, ThrowOnError>({
+            security: [
+                {
+                    scheme: 'bearer',
+                    type: 'http'
+                }
+            ],
             url: '/api/shopping-list/{id}',
             ...options
         });
@@ -60,6 +84,12 @@ export class ShoppingListApi {
     
     public static putApiShoppingListById<ThrowOnError extends boolean = false>(options: Options<PutApiShoppingListByIdData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).put<unknown, unknown, ThrowOnError>({
+            security: [
+                {
+                    scheme: 'bearer',
+                    type: 'http'
+                }
+            ],
             url: '/api/shopping-list/{id}',
             ...options,
             headers: {

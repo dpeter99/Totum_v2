@@ -8,7 +8,7 @@ const arachneSettings: UserManagerSettings = {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error 
     authority: window['services__Arachne__https__0'],
-    client_id: 'react-client',
+    client_id: 'cellarium-client',
     client_secret: '901564A5-E7FE-42CB-B10D-61EF6A8F3654',
     redirect_uri: `${origin}/oauth/callback`,
     silent_redirect_uri: `${origin}/oauth/callback`,
@@ -17,7 +17,7 @@ const arachneSettings: UserManagerSettings = {
     // this is for getting user.profile data, when open id connect is implemented
     //scope: 'api1 openid profile'
     // this is just for OAuth2 flow
-    scope: 'api1 openid profile',
+    scope: 'cellarium openid profile',
     loadUserInfo: true,
     
     stateStore: new WebStorageStateStore({ store: window.localStorage }),

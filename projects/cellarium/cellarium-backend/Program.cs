@@ -2,6 +2,7 @@ using cellarium_backend;
 using cellarium_backend.Models;
 using cellarium_backend.Services;
 using cellarium_backend.Services.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,15 +21,19 @@ builder.Services.AddAuthentication()
     {
         options.Authority = "https://localhost:5001";
         options.TokenValidationParameters.ValidateAudience = false;
+        options.Events.OnTokenValidated = context =>
+        {
+            
+            return Task.CompletedTask;
+        };
     });
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("ApiScope", policy =>
-    {
-        policy.RequireAuthenticatedUser();
-        policy.RequireClaim("scope", "api1");
-    });
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .RequireClaim("scope", "cellarium")
+        .Build();
 });
 
 builder.Services.AddHttpContextAccessor();
@@ -43,11 +48,15 @@ app.UseCors(config =>
     config.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
 });
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapDefaultEndpoints();
 
 app.UseHttpsRedirection();
 
 app.MapControllers();
+
 
 
 app.Run();
