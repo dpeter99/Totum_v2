@@ -8,21 +8,18 @@ namespace cellarium_backend.Services.Auth;
 public class UserService() : IUserService
 {
     
-    public async Task<User> GetUser(HttpContext context)
+    public Task<User> GetUser(HttpContext context)
     {
+        // Extract user ID directly from claims (JWT auth already completed)
+        var userIdClaim = context.User?.FindFirst(ClaimTypes.NameIdentifier);
         
-        var res = await context.AuthenticateAsync();
-        
-        context.User.Identity.IsAuthenticated = true;
-
-        if (res.Succeeded && res.Principal != null)
+        if (userIdClaim != null && !string.IsNullOrEmpty(userIdClaim.Value))
         {
-            var name = res.Principal.FindFirst(ClaimTypes.NameIdentifier);
-        
-            Console.WriteLine("######: " + name.Value);
+            return Task.FromResult(new User { Id = userIdClaim.Value });
         }
         
-        return null;
+        // Return temp user if no valid claim found
+        return Task.FromResult(new User { Id = "temp" });
     }
     
 }

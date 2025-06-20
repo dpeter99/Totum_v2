@@ -18,7 +18,7 @@ public static class ShoppingListItemDtoMapper
         return new ShoppingListItem()
         {
             Id = Guid.CreateVersion7(),
-            Name = create.Title,
+            Name = create.Name,
         };
     }
 }

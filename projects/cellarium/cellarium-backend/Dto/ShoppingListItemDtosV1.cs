@@ -8,5 +8,5 @@ public class ShoppingListItemDto
 
 public class ShoppingListItemCreationDto
 {
-    public string Title { get; set; }
+    public string Name { get; set; }
 }

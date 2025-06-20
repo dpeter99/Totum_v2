@@ -40,6 +40,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddTransient<IShoppingListService, ShoppingListService>();
+builder.Services.AddTransient<IShoppingListItemService, ShoppingListItemService>();
 
 var app = builder.Build();
 
