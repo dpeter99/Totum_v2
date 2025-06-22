@@ -51,6 +51,30 @@ public class ShoppingListItemCreationDtoBuilder
 }
 
 /// <summary>
+/// Builder for shopping list item update DTOs
+/// </summary>
+public class ShoppingListItemUpdateDtoBuilder
+{
+    private string _name = "Updated Item";
+
+    public ShoppingListItemUpdateDtoBuilder WithName(string name)
+    {
+        _name = name;
+        return this;
+    }
+
+    public ShoppingListItemUpdateDto Build()
+    {
+        return new ShoppingListItemUpdateDto
+        {
+            Name = _name
+        };
+    }
+
+    public static ShoppingListItemUpdateDtoBuilder Default() => new();
+}
+
+/// <summary>
 /// Constants for common test values
 /// </summary>
 public static class TestConstants

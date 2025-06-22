@@ -1,50 +1,53 @@
-# React + TypeScript + Vite
+# Cellarium Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript frontend for the Cellarium shopping list management system.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 18** + **TypeScript** for type-safe component development
+- **Vite** for fast development and build tooling
+- **SCSS Modules** for component-scoped styling
+- **OIDC Client** for authentication with Arachne Identity Server
+- **Auto-generated API Client** from OpenAPI specifications
 
-## Expanding the ESLint configuration
+## Development
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+```bash
+# Install dependencies
+pnpm install
 
-- Configure the top-level `parserOptions` property like this:
+# Start development server
+pnpm dev
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+# Generate API client from backend OpenAPI spec
+pnpm gen-api
+
+# Build for production
+pnpm build
+
+# Lint and format code
+pnpm lint
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## URLs
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+- **Development**: http://localhost:6001
+- **Backend API**: https://localhost:5002
+- **API Documentation**: https://localhost:5002/scalar/v1
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+## Authentication
+
+The frontend uses OIDC authentication flow:
+- **Identity Provider**: Arachne Identity Server (https://localhost:5001)
+- **Client ID**: `cellarium-client`
+- **Scopes**: `openid profile cellarium`
+
+## API Integration
+
+The frontend uses an auto-generated TypeScript client from the backend's OpenAPI specification. After making backend API changes, regenerate the client:
+
+```bash
+pnpm gen-api
 ```
+
+Generated client files are located in `src/api/` directory.

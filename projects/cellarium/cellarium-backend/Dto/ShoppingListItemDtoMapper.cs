@@ -21,4 +21,9 @@ public static class ShoppingListItemDtoMapper
             Name = create.Name,
         };
     }
+    
+    public static void UpdateFromDto(this ShoppingListItem item, ShoppingListItemUpdateDto update)
+    {
+        item.Name = update.Name;
+    }
 }

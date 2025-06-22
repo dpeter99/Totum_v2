@@ -10,3 +10,8 @@ public class ShoppingListItemCreationDto
 {
     public string Name { get; set; }
 }
+
+public class ShoppingListItemUpdateDto
+{
+    public string Name { get; set; }
+}

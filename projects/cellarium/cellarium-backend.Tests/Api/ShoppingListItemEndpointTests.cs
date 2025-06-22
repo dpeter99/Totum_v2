@@ -304,6 +304,427 @@ public class ShoppingListItemEndpointTests : ApiTestBase
 
     #endregion
 
+    #region GET /api/shopping-list/{listId}/item/{itemId} - Single Item Retrieval
+
+    [Fact]
+    public async Task GET_SingleItem_ReturnsCorrectItem()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId);
+        var item = await CreateShoppingListItemAsync(list.Id, userId, "Test Item");
+
+        // Act
+        AuthenticateAs(userId);
+        var response = await Client.GetAsync($"/api/shopping-list/{list.Id}/item/{item.id}");
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var returnedItem = await response.Content.ReadFromJsonAsync<ShoppingListItemDto>();
+        
+        Assert.NotNull(returnedItem);
+        Assert.Equal(item.id, returnedItem.id);
+        Assert.Equal(item.name, returnedItem.name);
+    }
+
+    [Fact]
+    public async Task GET_SingleItem_WithNonExistentItem_Returns404()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId);
+        var nonExistentItemId = Guid.NewGuid();
+
+        // Act
+        AuthenticateAs(userId);
+        var response = await Client.GetAsync($"/api/shopping-list/{list.Id}/item/{nonExistentItemId}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GET_SingleItem_WithNonExistentList_Returns404()
+    {
+        // Arrange
+        var nonExistentListId = Guid.NewGuid();
+        var nonExistentItemId = Guid.NewGuid();
+
+        // Act
+        AuthenticateAs(TestConstants.Users.TestUser1);
+        var response = await Client.GetAsync($"/api/shopping-list/{nonExistentListId}/item/{nonExistentItemId}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GET_SingleItem_FromOtherUserList_Returns404()
+    {
+        // Arrange
+        var user1 = TestConstants.Users.TestUser1;
+        var user2 = TestConstants.Users.TestUser2;
+        
+        var user1List = await CreateShoppingListAsync(user1);
+        var item = await CreateShoppingListItemAsync(user1List.Id, user1, "User 1 Item");
+
+        // Act - Try to get item from user1's list as user2
+        AuthenticateAs(user2);
+        var response = await Client.GetAsync($"/api/shopping-list/{user1List.Id}/item/{item.id}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GET_SingleItem_WithoutAuthentication_Returns401()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId);
+        var item = await CreateShoppingListItemAsync(list.Id, userId, "Test Item");
+
+        // Act - Don't authenticate
+        Client.DefaultRequestHeaders.Authorization = null;
+        var response = await Client.GetAsync($"/api/shopping-list/{list.Id}/item/{item.id}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GET_SingleItem_EmitsCorrectTelemetry()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId);
+        var item = await CreateShoppingListItemAsync(list.Id, userId, "Telemetry Test Item");
+        
+        ClearTelemetry();
+
+        // Act
+        AuthenticateAs(userId);
+        var response = await Client.GetAsync($"/api/shopping-list/{list.Id}/item/{item.id}");
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        
+        var collector = TelemetryCollector.CollectedSpans;
+        
+        collector.AssertSpanExists("get-shopping-list-item");
+        collector.AssertSpanHasTag("get-shopping-list-item", "user.id", userId);
+        collector.AssertSpanHasTag("get-shopping-list-item", "shopping_list.id", list.Id);
+        collector.AssertSpanHasTag("get-shopping-list-item", "item.id", item.id);
+        collector.AssertSpanHasTag("get-shopping-list-item", "item.name", "Telemetry Test Item");
+        collector.AssertSpanHasTag("get-shopping-list-item", "result", "success");
+    }
+
+    #endregion
+
+    #region PUT /api/shopping-list/{listId}/item/{itemId} - Item Updates
+
+    [Fact]
+    public async Task PUT_WithValidData_UpdatesItemAndReturns200()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId);
+        var item = await CreateShoppingListItemAsync(list.Id, userId, "Original Name");
+        
+        var updateDto = ShoppingListItemUpdateDtoBuilder.Default()
+            .WithName("Updated Name")
+            .Build();
+
+        // Act
+        AuthenticateAs(userId);
+        var response = await Client.PutAsJsonAsync($"/api/shopping-list/{list.Id}/item/{item.id}", updateDto);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var updatedItem = await response.Content.ReadFromJsonAsync<ShoppingListItemDto>();
+        
+        Assert.NotNull(updatedItem);
+        Assert.Equal(item.id, updatedItem.id);
+        Assert.Equal("Updated Name", updatedItem.name);
+    }
+
+    [Fact]
+    public async Task PUT_WithNonExistentItem_Returns404()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId);
+        var nonExistentItemId = Guid.NewGuid();
+        
+        var updateDto = ShoppingListItemUpdateDtoBuilder.Default()
+            .WithName("Updated Name")
+            .Build();
+
+        // Act
+        AuthenticateAs(userId);
+        var response = await Client.PutAsJsonAsync($"/api/shopping-list/{list.Id}/item/{nonExistentItemId}", updateDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PUT_WithNonExistentList_Returns404()
+    {
+        // Arrange
+        var nonExistentListId = Guid.NewGuid();
+        var nonExistentItemId = Guid.NewGuid();
+        
+        var updateDto = ShoppingListItemUpdateDtoBuilder.Default()
+            .WithName("Updated Name")
+            .Build();
+
+        // Act
+        AuthenticateAs(TestConstants.Users.TestUser1);
+        var response = await Client.PutAsJsonAsync($"/api/shopping-list/{nonExistentListId}/item/{nonExistentItemId}", updateDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PUT_ItemFromOtherUserList_Returns404()
+    {
+        // Arrange
+        var user1 = TestConstants.Users.TestUser1;
+        var user2 = TestConstants.Users.TestUser2;
+        
+        var user1List = await CreateShoppingListAsync(user1);
+        var item = await CreateShoppingListItemAsync(user1List.Id, user1, "User 1 Item");
+        
+        var updateDto = ShoppingListItemUpdateDtoBuilder.Default()
+            .WithName("Hacked Name")
+            .Build();
+
+        // Act - Try to update item from user1's list as user2
+        AuthenticateAs(user2);
+        var response = await Client.PutAsJsonAsync($"/api/shopping-list/{user1List.Id}/item/{item.id}", updateDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PUT_WithoutAuthentication_Returns401()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId);
+        var item = await CreateShoppingListItemAsync(list.Id, userId, "Test Item");
+        
+        var updateDto = ShoppingListItemUpdateDtoBuilder.Default()
+            .WithName("Updated Name")
+            .Build();
+
+        // Act - Don't authenticate
+        Client.DefaultRequestHeaders.Authorization = null;
+        var response = await Client.PutAsJsonAsync($"/api/shopping-list/{list.Id}/item/{item.id}", updateDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PUT_UpdatePersistsCorrectly()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId);
+        var item = await CreateShoppingListItemAsync(list.Id, userId, "Original Name");
+        
+        var updateDto = ShoppingListItemUpdateDtoBuilder.Default()
+            .WithName("Persistently Updated Name")
+            .Build();
+
+        // Act - Update the item
+        AuthenticateAs(userId);
+        var updateResponse = await Client.PutAsJsonAsync($"/api/shopping-list/{list.Id}/item/{item.id}", updateDto);
+        updateResponse.EnsureSuccessStatusCode();
+
+        // Assert - Verify the change persisted by getting the item again
+        var getResponse = await Client.GetAsync($"/api/shopping-list/{list.Id}/item/{item.id}");
+        getResponse.EnsureSuccessStatusCode();
+        var retrievedItem = await getResponse.Content.ReadFromJsonAsync<ShoppingListItemDto>();
+        
+        Assert.NotNull(retrievedItem);
+        Assert.Equal("Persistently Updated Name", retrievedItem.name);
+    }
+
+    [Fact]
+    public async Task PUT_EmitsCorrectTelemetry()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId);
+        var item = await CreateShoppingListItemAsync(list.Id, userId, "Original Name");
+        
+        var updateDto = ShoppingListItemUpdateDtoBuilder.Default()
+            .WithName("Telemetry Updated Name")
+            .Build();
+        
+        ClearTelemetry();
+
+        // Act
+        AuthenticateAs(userId);
+        var response = await Client.PutAsJsonAsync($"/api/shopping-list/{list.Id}/item/{item.id}", updateDto);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        
+        var collector = TelemetryCollector.CollectedSpans;
+        
+        collector.AssertSpanExists("update-shopping-list-item");
+        collector.AssertSpanHasTag("update-shopping-list-item", "user.id", userId);
+        collector.AssertSpanHasTag("update-shopping-list-item", "shopping_list.id", list.Id);
+        collector.AssertSpanHasTag("update-shopping-list-item", "item.id", item.id);
+        collector.AssertSpanHasTag("update-shopping-list-item", "item.name", "Telemetry Updated Name");
+        collector.AssertSpanHasTag("update-shopping-list-item", "result", "success");
+    }
+
+    #endregion
+
+    #region DELETE /api/shopping-list/{listId}/item/{itemId} - Item Deletion
+
+    [Fact]
+    public async Task DELETE_WithValidData_DeletesItemAndReturns204()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId);
+        var item = await CreateShoppingListItemAsync(list.Id, userId, "Item to Delete");
+
+        // Act
+        AuthenticateAs(userId);
+        var response = await Client.DeleteAsync($"/api/shopping-list/{list.Id}/item/{item.id}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DELETE_WithNonExistentItem_Returns404()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId);
+        var nonExistentItemId = Guid.NewGuid();
+
+        // Act
+        AuthenticateAs(userId);
+        var response = await Client.DeleteAsync($"/api/shopping-list/{list.Id}/item/{nonExistentItemId}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DELETE_WithNonExistentList_Returns404()
+    {
+        // Arrange
+        var nonExistentListId = Guid.NewGuid();
+        var nonExistentItemId = Guid.NewGuid();
+
+        // Act
+        AuthenticateAs(TestConstants.Users.TestUser1);
+        var response = await Client.DeleteAsync($"/api/shopping-list/{nonExistentListId}/item/{nonExistentItemId}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DELETE_ItemFromOtherUserList_Returns404()
+    {
+        // Arrange
+        var user1 = TestConstants.Users.TestUser1;
+        var user2 = TestConstants.Users.TestUser2;
+        
+        var user1List = await CreateShoppingListAsync(user1);
+        var item = await CreateShoppingListItemAsync(user1List.Id, user1, "User 1 Item");
+
+        // Act - Try to delete item from user1's list as user2
+        AuthenticateAs(user2);
+        var response = await Client.DeleteAsync($"/api/shopping-list/{user1List.Id}/item/{item.id}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DELETE_WithoutAuthentication_Returns401()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId);
+        var item = await CreateShoppingListItemAsync(list.Id, userId, "Test Item");
+
+        // Act - Don't authenticate
+        Client.DefaultRequestHeaders.Authorization = null;
+        var response = await Client.DeleteAsync($"/api/shopping-list/{list.Id}/item/{item.id}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DELETE_RemovesItemPermanently()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId);
+        var item = await CreateShoppingListItemAsync(list.Id, userId, "Item to be Deleted");
+
+        // Act - Delete the item
+        AuthenticateAs(userId);
+        var deleteResponse = await Client.DeleteAsync($"/api/shopping-list/{list.Id}/item/{item.id}");
+        deleteResponse.EnsureSuccessStatusCode();
+
+        // Assert - Verify the item is gone
+        var getResponse = await Client.GetAsync($"/api/shopping-list/{list.Id}/item/{item.id}");
+        Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
+
+        // Also verify it's not in the list of items
+        var listResponse = await Client.GetAsync($"/api/shopping-list/{list.Id}/item");
+        listResponse.EnsureSuccessStatusCode();
+        var items = await listResponse.Content.ReadFromJsonAsync<ShoppingListItemDto[]>();
+        
+        Assert.NotNull(items);
+        Assert.DoesNotContain(items, i => i.id == item.id);
+    }
+
+    [Fact]
+    public async Task DELETE_EmitsCorrectTelemetry()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId);
+        var item = await CreateShoppingListItemAsync(list.Id, userId, "Telemetry Delete Item");
+        
+        ClearTelemetry();
+
+        // Act
+        AuthenticateAs(userId);
+        var response = await Client.DeleteAsync($"/api/shopping-list/{list.Id}/item/{item.id}");
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        
+        var collector = TelemetryCollector.CollectedSpans;
+        
+        collector.AssertSpanExists("delete-shopping-list-item");
+        collector.AssertSpanHasTag("delete-shopping-list-item", "user.id", userId);
+        collector.AssertSpanHasTag("delete-shopping-list-item", "shopping_list.id", list.Id);
+        collector.AssertSpanHasTag("delete-shopping-list-item", "item.id", item.id);
+        collector.AssertSpanHasTag("delete-shopping-list-item", "result", "success");
+    }
+
+    #endregion
+
     #region Concurrent Operations and Performance
 
     [Fact]
