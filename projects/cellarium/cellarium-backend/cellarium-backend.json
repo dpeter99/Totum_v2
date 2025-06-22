@@ -189,17 +189,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ShoppingListCreationDto"
+                "$ref": "#/components/schemas/ShoppingListUpdateDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/ShoppingListCreationDto"
+                "$ref": "#/components/schemas/ShoppingListUpdateDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/ShoppingListCreationDto"
+                "$ref": "#/components/schemas/ShoppingListUpdateDto"
               }
             }
           },
@@ -691,9 +691,14 @@
         }
       },
       "ShoppingListCreationDto": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
+            "maxLength": 100,
+            "minLength": 1,
             "type": "string"
           }
         }
@@ -737,6 +742,19 @@
         "type": "object",
         "properties": {
           "name": {
+            "type": "string"
+          }
+        }
+      },
+      "ShoppingListUpdateDto": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
             "type": "string"
           }
         }

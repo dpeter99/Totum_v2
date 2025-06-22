@@ -28,5 +28,14 @@ public class ShoppingListWithItemsDto : ShoppingListDto
 
 public class ShoppingListCreationDto
 {
+    [Required(ErrorMessage = "Shopping list name is required")]
+    [StringLength(100, MinimumLength = 1, ErrorMessage = "Shopping list name must be between 1 and 100 characters")]
+    public string Name { get; set; }
+}
+
+public class ShoppingListUpdateDto
+{
+    [Required(ErrorMessage = "Shopping list name is required")]
+    [StringLength(100, MinimumLength = 1, ErrorMessage = "Shopping list name must be between 1 and 100 characters")]
     public string Name { get; set; }
 }

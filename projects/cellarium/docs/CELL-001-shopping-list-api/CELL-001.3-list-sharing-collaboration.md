@@ -106,6 +106,7 @@ public class ShoppingListCollaborator
 **Location:** Service layer and authorization filters
 
 **Authorization matrix:**
+
 | Operation | Owner | Editor | Viewer |
 |-----------|-------|--------|--------|
 | View list | ✓ | ✓ | ✓ |

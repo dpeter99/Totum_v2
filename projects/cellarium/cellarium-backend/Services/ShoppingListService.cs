@@ -13,7 +13,7 @@ public interface IShoppingListService
     Task<ShoppingList?> AddShoppingList(ShoppingListCreationDto shoppingList);
     Task<ShoppingList?> AddShoppingList(ShoppingListCreationDto shoppingList, string userId);
     Task<bool> DeleteShoppingList(Guid id, string userId);
-    Task<ShoppingList?> UpdateShoppingList(Guid id, ShoppingListCreationDto shoppingList, string userId);
+    Task<ShoppingList?> UpdateShoppingList(Guid id, ShoppingListUpdateDto shoppingList, string userId);
 }
 
 public class ShoppingListService(CellariumDbContext db): IShoppingListService
@@ -103,7 +103,7 @@ public class ShoppingListService(CellariumDbContext db): IShoppingListService
         return true;
     }
 
-    public async Task<ShoppingList?> UpdateShoppingList(Guid id, ShoppingListCreationDto shoppingList, string userId)
+    public async Task<ShoppingList?> UpdateShoppingList(Guid id, ShoppingListUpdateDto shoppingList, string userId)
     {
         // Find the shopping list that belongs to the user
         var existingList = db.ShoppingList.FirstOrDefault(sl => sl.Id == id && sl.UserId == userId);
@@ -113,8 +113,8 @@ public class ShoppingListService(CellariumDbContext db): IShoppingListService
             return null; // List not found or user doesn't own it
         }
         
-        // Update the properties
-        existingList.Name = shoppingList.Name;
+        // Update the properties using the mapper
+        existingList.UpdateFromDto(shoppingList);
         
         await db.SaveChangesAsync();
         return existingList;

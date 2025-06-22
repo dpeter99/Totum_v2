@@ -27,6 +27,27 @@ public class ShoppingListCreationDtoBuilder
 }
 
 /// <summary>
+/// Builder for shopping list update DTOs
+/// </summary>
+public class ShoppingListUpdateDtoBuilder
+{
+    private string _name = "Updated Shopping List";
+
+    public ShoppingListUpdateDtoBuilder WithName(string name)
+    {
+        _name = name;
+        return this;
+    }
+
+    public ShoppingListUpdateDto Build()
+    {
+        return new ShoppingListUpdateDto { Name = _name };
+    }
+
+    public static ShoppingListUpdateDtoBuilder Default() => new();
+}
+
+/// <summary>
 /// Builder for shopping list item creation DTOs
 /// </summary>
 public class ShoppingListItemCreationDtoBuilder

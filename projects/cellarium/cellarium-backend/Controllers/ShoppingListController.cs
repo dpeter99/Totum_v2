@@ -92,7 +92,7 @@ namespace cellarium_backend.Controllers
         [EndpointDescription("Update a shopping list (only if owned by current user)")]
         [ProducesResponseType(typeof(ShoppingListWithItemsDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Put(Guid id, [FromBody] ShoppingListCreationDto value)
+        public async Task<IActionResult> Put(Guid id, [FromBody] ShoppingListUpdateDto value)
         {
             var currentUser = await userService.GetUser(HttpContext);
             var updatedList = await shoppingListService.UpdateShoppingList(id, value, currentUser.Id);

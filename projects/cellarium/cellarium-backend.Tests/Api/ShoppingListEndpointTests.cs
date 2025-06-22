@@ -54,8 +54,8 @@ public class ShoppingListEndpointTests : ApiTestBase
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
-    [Fact(Skip = "No validation implemented yet")]
-    public async Task POST_WithEmptyName_StillCreates()
+    [Fact]
+    public async Task POST_WithEmptyName_Returns400BadRequest()
     {
         // Arrange
         var createDto = ShoppingListCreationDtoBuilder.Default()
@@ -66,8 +66,62 @@ public class ShoppingListEndpointTests : ApiTestBase
         AuthenticateAs(TestConstants.Users.TestUser1);
         var response = await Client.PostAsJsonAsync("/api/shopping-list", createDto);
 
-        // Assert - Currently creates due to no validation
-        Assert.NotEqual(HttpStatusCode.Created, response.StatusCode);
+        // Assert - Should now return 400 due to validation
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task POST_WithWhitespaceOnlyName_Returns400BadRequest()
+    {
+        // Arrange
+        var createDto = ShoppingListCreationDtoBuilder.Default()
+            .WithName("   ")
+            .Build();
+
+        // Act
+        AuthenticateAs(TestConstants.Users.TestUser1);
+        var response = await Client.PostAsJsonAsync("/api/shopping-list", createDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task POST_WithNameTooLong_Returns400BadRequest()
+    {
+        // Arrange - Create a name longer than 100 characters
+        var longName = new string('a', 101);
+        var createDto = ShoppingListCreationDtoBuilder.Default()
+            .WithName(longName)
+            .Build();
+
+        // Act
+        AuthenticateAs(TestConstants.Users.TestUser1);
+        var response = await Client.PostAsJsonAsync("/api/shopping-list", createDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task POST_WithValidName100Chars_Returns201Created()
+    {
+        // Arrange - Test boundary condition (exactly 100 characters)
+        var validName = new string('a', 100);
+        var createDto = ShoppingListCreationDtoBuilder.Default()
+            .WithName(validName)
+            .Build();
+
+        // Act
+        AuthenticateAs(TestConstants.Users.TestUser1);
+        var response = await Client.PostAsJsonAsync("/api/shopping-list", createDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        
+        var createdList = await response.Content.ReadFromJsonAsync<ShoppingListDto>();
+        Assert.NotNull(createdList);
+        Assert.Equal(validName, createdList.Name);
     }
 
     [Fact]
@@ -288,7 +342,7 @@ public class ShoppingListEndpointTests : ApiTestBase
         // Arrange
         var userId = TestConstants.Users.TestUser1;
         var list = await CreateShoppingListAsync(userId, "Original Name");
-        var updateDto = ShoppingListCreationDtoBuilder.Default()
+        var updateDto = ShoppingListUpdateDtoBuilder.Default()
             .WithName("Updated Name")
             .Build();
 
@@ -312,7 +366,7 @@ public class ShoppingListEndpointTests : ApiTestBase
         var user2 = TestConstants.Users.TestUser2;
         
         var user1List = await CreateShoppingListAsync(user1);
-        var updateDto = ShoppingListCreationDtoBuilder.Default()
+        var updateDto = ShoppingListUpdateDtoBuilder.Default()
             .WithName("Hacked Name")
             .Build();
 
@@ -327,6 +381,58 @@ public class ShoppingListEndpointTests : ApiTestBase
         AuthenticateAs(user1);
         var verifyResponse = await GetShoppingListAsync(user1List.Id, user1);
         Assert.Equal(TestConstants.ShoppingLists.GroceryList, verifyResponse.Name);
+    }
+
+    [Fact]
+    public async Task PUT_WithEmptyName_Returns400BadRequest()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId, "Original Name");
+        var updateDto = ShoppingListUpdateDtoBuilder.Default()
+            .WithName("")
+            .Build();
+
+        // Act
+        var response = await Client.PutAsJsonAsync($"/api/shopping-list/{list.Id}", updateDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PUT_WithNameTooLong_Returns400BadRequest()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId, "Original Name");
+        var longName = new string('b', 101);
+        var updateDto = ShoppingListUpdateDtoBuilder.Default()
+            .WithName(longName)
+            .Build();
+
+        // Act
+        var response = await Client.PutAsJsonAsync($"/api/shopping-list/{list.Id}", updateDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PUT_WithWhitespaceOnlyName_Returns400BadRequest()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId, "Original Name");
+        var updateDto = ShoppingListUpdateDtoBuilder.Default()
+            .WithName("   ")
+            .Build();
+
+        // Act
+        var response = await Client.PutAsJsonAsync($"/api/shopping-list/{list.Id}", updateDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     #endregion

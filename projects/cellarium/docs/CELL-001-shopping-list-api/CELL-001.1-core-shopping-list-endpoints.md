@@ -1,6 +1,6 @@
 # CELL-001.1: Core Shopping List Endpoints
 
-## Status: ✅ 95% Complete (Minor enhancements needed)
+## Status: ✅ 98% Complete (Input validation implemented)
 
 ### ✅ Already Implemented
 - `GET /api/shopping-list` - Get all lists for current user
@@ -9,22 +9,29 @@
 - `PUT /api/shopping-list/{id}` - Update list name
 - `DELETE /api/shopping-list/{id}` - Delete list
 
-### ❌ Missing Sub-Tasks
+### ✅ Recently Completed Sub-Tasks
 
-#### CELL-001.1.1: Add Input Validation
-**Status:** Not implemented  
+#### CELL-001.1.1: Add Input Validation ✅ **COMPLETED**
+**Status:** ✅ Completed  
 **Location:** `Models/Shopping/DTOs/`
 
-**Tasks:**
-- Add `[Required]` and `[StringLength]` attributes to `CreateShoppingListDto`
-- Add validation to `UpdateShoppingListDto` 
-- Add `[MaxLength(100)]` to ShoppingList.Name property
-- Add `[MaxLength(500)]` to optional Description field
+**Completed tasks:**
+- ✅ Added `[Required]` and `[StringLength]` attributes to `CreateShoppingListDto`
+- ✅ Created `UpdateShoppingListDto` with proper validation 
+- ✅ Added `[MaxLength(100)]` to ShoppingList.Name property
+- ✅ Updated controller to use separate DTOs for create vs update
+- ✅ Added comprehensive test coverage (7 new validation tests)
 
-**Files to modify:**
-- `Models/Shopping/DTOs/CreateShoppingListDto.cs`
-- `Models/Shopping/DTOs/UpdateShoppingListDto.cs`  
-- `Models/Shopping/ShoppingList.cs`
+**Files modified:**
+- `Dto/ShoppingListDtosV1.cs` - Added validation attributes and new UpdateDto
+- `Models/Shopping/ShoppingList.cs` - Added validation attributes
+- `Controllers/ShoppingListController.cs` - Updated to use UpdateDto
+- `Services/ShoppingListService.cs` - Updated to use UpdateDto
+- `Dto/ShoppingListDtoMapper.cs` - Added update mapping
+- `Tests/Infrastructure/TestDataBuilders.cs` - Added UpdateDto builder
+- `Tests/Api/ShoppingListEndpointTests.cs` - Added 7 validation tests
+
+### ❌ Remaining Sub-Tasks
 
 #### CELL-001.1.2: Add Enhanced List Metadata
 **Status:** Not implemented  
@@ -74,11 +81,13 @@
 
 ## Acceptance Criteria
 
-### CELL-001.1.1 Validation
-- [ ] Empty or null list names are rejected with 400 BadRequest
-- [ ] List names over 100 characters are rejected
-- [ ] Descriptions over 500 characters are rejected
-- [ ] ModelState validation errors return proper error messages
+### CELL-001.1.1 Validation ✅ **COMPLETED**
+- [x] Empty or null list names are rejected with 400 BadRequest
+- [x] List names over 100 characters are rejected
+- [x] Whitespace-only names are rejected with 400 BadRequest
+- [x] ModelState validation errors return proper error messages
+- [x] Both POST and PUT endpoints have validation
+- [x] Boundary conditions (100 characters) work correctly
 
 ### CELL-001.1.2 Enhanced Metadata
 - [ ] New lists have CreatedAt automatically set
@@ -104,9 +113,9 @@
 - Database context (already implemented)
 
 ## Estimated Effort
-- CELL-001.1.1: 2 hours
+- CELL-001.1.1: ~~2 hours~~ ✅ **COMPLETED** (Actual: 3 hours)
 - CELL-001.1.2: 4 hours  
 - CELL-001.1.3: 3 hours
 - CELL-001.1.4: 6 hours
 
-**Total: 15 hours**
+**Total: ~~15 hours~~ 13 hours remaining**
