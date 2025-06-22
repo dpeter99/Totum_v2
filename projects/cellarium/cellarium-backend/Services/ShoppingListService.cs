@@ -46,6 +46,12 @@ public class ShoppingListService(CellariumDbContext db): IShoppingListService
         span?.AddTag("user.id", userId);
         
         var list = db.ShoppingList.FirstOrDefault(sl => sl.Id == id && sl.UserId == userId);
+        if (list != null)
+        {
+            // Load items for this shopping list
+            list.Items = db.ShoppingListItems.Where(item => item.ShoppingListId == id).ToList();
+        }
+        
         span?.AddTag("found", (list != null).ToString());
         
         return list;
