@@ -1,6 +1,6 @@
 # CELL-001.1: Core Shopping List Endpoints
 
-## Status: ✅ 98% Complete (Input validation implemented)
+## Status: ✅ 99% Complete (Enhanced metadata implemented)
 
 ### ✅ Already Implemented
 - `GET /api/shopping-list` - Get all lists for current user
@@ -31,24 +31,27 @@
 - `Tests/Infrastructure/TestDataBuilders.cs` - Added UpdateDto builder
 - `Tests/Api/ShoppingListEndpointTests.cs` - Added 7 validation tests
 
-### ❌ Remaining Sub-Tasks
-
-#### CELL-001.1.2: Add Enhanced List Metadata
-**Status:** Not implemented  
+#### CELL-001.1.2: Add Enhanced List Metadata ✅ **COMPLETED**
+**Status:** ✅ Completed  
 **Location:** `Models/Shopping/ShoppingList.cs`
 
-**Tasks:**
-- Add `Description` property (optional, max 500 chars)
-- Add `CreatedAt` timestamp (auto-set)
-- Add `UpdatedAt` timestamp (auto-update)
-- Update DTOs to support new fields
-- Update database model configuration
+**Completed tasks:**
+- ✅ Added `Description` property (optional, max 500 chars) with validation
+- ✅ Added `CreatedAt` timestamp (auto-set on creation)
+- ✅ Added `UpdatedAt` timestamp (auto-update on modification)
+- ✅ Updated DTOs to support new fields in creation, update, and response DTOs
+- ✅ Updated database model configuration with automatic timestamp handling
+- ✅ Added comprehensive test coverage (9 new tests for enhanced metadata)
 
-**Files to modify:**
-- `Models/Shopping/ShoppingList.cs`
-- `Models/Shopping/DTOs/CreateShoppingListDto.cs`
-- `Models/Shopping/DTOs/ShoppingListDto.cs`
-- `CellariumDbContext.cs` (model configuration)
+**Files modified:**
+- `Models/Shopping/ShoppingList.cs` - Added Description, CreatedAt, UpdatedAt properties
+- `Dto/ShoppingListDtosV1.cs` - Updated all DTOs with new fields and validation
+- `Dto/ShoppingListDtoMapper.cs` - Updated mapping logic for new fields
+- `CellariumDbContext.cs` - Added automatic timestamp management
+- `Tests/Infrastructure/TestDataBuilders.cs` - Updated builders for testing
+- `Tests/Api/ShoppingListEndpointTests.cs` - Added 9 new enhanced metadata tests
+
+### ❌ Remaining Sub-Tasks
 
 #### CELL-001.1.3: Configure OpenAPI Documentation  
 **Status:** Not implemented
@@ -89,11 +92,13 @@
 - [x] Both POST and PUT endpoints have validation
 - [x] Boundary conditions (100 characters) work correctly
 
-### CELL-001.1.2 Enhanced Metadata
-- [ ] New lists have CreatedAt automatically set
-- [ ] UpdatedAt is automatically updated on list modifications
-- [ ] Description field is optional and properly handled
-- [ ] API returns enhanced list information
+### CELL-001.1.2 Enhanced Metadata ✅ **COMPLETED**
+- [x] New lists have CreatedAt automatically set
+- [x] UpdatedAt is automatically updated on list modifications
+- [x] Description field is optional and properly handled (supports null values)
+- [x] API returns enhanced list information (Description, CreatedAt, UpdatedAt)
+- [x] Description validation prevents values over 500 characters
+- [x] CreatedAt timestamp is preserved during updates
 
 ### CELL-001.1.3 API Documentation
 - [ ] OpenAPI specification is generated at `/openapi/v1.json`
@@ -114,8 +119,8 @@
 
 ## Estimated Effort
 - CELL-001.1.1: ~~2 hours~~ ✅ **COMPLETED** (Actual: 3 hours)
-- CELL-001.1.2: 4 hours  
+- CELL-001.1.2: ~~4 hours~~ ✅ **COMPLETED** (Actual: 4 hours)
 - CELL-001.1.3: 3 hours
 - CELL-001.1.4: 6 hours
 
-**Total: ~~15 hours~~ 13 hours remaining**
+**Total: ~~15 hours~~ 9 hours remaining**

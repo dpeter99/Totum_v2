@@ -87,6 +87,117 @@ public class ShoppingListEndpointTests : ApiTestBase
     }
 
     [Fact]
+    public async Task POST_WithValidDescription_Returns201Created()
+    {
+        // Arrange
+        var description = "This is a test shopping list with a description";
+        var createDto = ShoppingListCreationDtoBuilder.Default()
+            .WithName("Test List")
+            .WithDescription(description)
+            .Build();
+
+        // Act
+        AuthenticateAs(TestConstants.Users.TestUser1);
+        var response = await Client.PostAsJsonAsync("/api/shopping-list", createDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        
+        var createdList = await response.Content.ReadFromJsonAsync<ShoppingListDto>();
+        Assert.NotNull(createdList);
+        Assert.Equal(description, createdList.Description);
+    }
+
+    [Fact]
+    public async Task POST_WithNullDescription_Returns201Created()
+    {
+        // Arrange
+        var createDto = ShoppingListCreationDtoBuilder.Default()
+            .WithName("Test List")
+            .WithDescription(null)
+            .Build();
+
+        // Act
+        AuthenticateAs(TestConstants.Users.TestUser1);
+        var response = await Client.PostAsJsonAsync("/api/shopping-list", createDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        
+        var createdList = await response.Content.ReadFromJsonAsync<ShoppingListDto>();
+        Assert.NotNull(createdList);
+        Assert.Null(createdList.Description);
+    }
+
+    [Fact]
+    public async Task POST_WithDescriptionTooLong_Returns400BadRequest()
+    {
+        // Arrange - Create a description longer than 500 characters
+        var longDescription = new string('a', 501);
+        var createDto = ShoppingListCreationDtoBuilder.Default()
+            .WithName("Test List")
+            .WithDescription(longDescription)
+            .Build();
+
+        // Act
+        AuthenticateAs(TestConstants.Users.TestUser1);
+        var response = await Client.PostAsJsonAsync("/api/shopping-list", createDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task POST_WithMaxLengthDescription_Returns201Created()
+    {
+        // Arrange - Test boundary condition (exactly 500 characters)
+        var validDescription = new string('a', 500);
+        var createDto = ShoppingListCreationDtoBuilder.Default()
+            .WithName("Test List")
+            .WithDescription(validDescription)
+            .Build();
+
+        // Act
+        AuthenticateAs(TestConstants.Users.TestUser1);
+        var response = await Client.PostAsJsonAsync("/api/shopping-list", createDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        
+        var createdList = await response.Content.ReadFromJsonAsync<ShoppingListDto>();
+        Assert.NotNull(createdList);
+        Assert.Equal(validDescription, createdList.Description);
+    }
+
+    [Fact]
+    public async Task POST_SetsTimestampsAutomatically()
+    {
+        // Arrange
+        var beforeCreation = DateTime.UtcNow.AddSeconds(-1);
+        var createDto = ShoppingListCreationDtoBuilder.Default()
+            .WithName("Timestamp Test List")
+            .Build();
+
+        // Act
+        AuthenticateAs(TestConstants.Users.TestUser1);
+        var response = await Client.PostAsJsonAsync("/api/shopping-list", createDto);
+        var afterCreation = DateTime.UtcNow.AddSeconds(1);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        
+        var createdList = await response.Content.ReadFromJsonAsync<ShoppingListDto>();
+        Assert.NotNull(createdList);
+        
+        // Check that timestamps are set and within reasonable bounds
+        Assert.True(createdList.CreatedAt > beforeCreation && createdList.CreatedAt < afterCreation);
+        Assert.True(createdList.UpdatedAt > beforeCreation && createdList.UpdatedAt < afterCreation);
+        
+        // CreatedAt and UpdatedAt should be very close (within 1 second) for new entities
+        Assert.True(Math.Abs((createdList.UpdatedAt - createdList.CreatedAt).TotalSeconds) < 1);
+    }
+
+    [Fact]
     public async Task POST_WithNameTooLong_Returns400BadRequest()
     {
         // Arrange - Create a name longer than 100 characters
@@ -433,6 +544,123 @@ public class ShoppingListEndpointTests : ApiTestBase
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PUT_WithValidDescription_UpdatesDescription()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId, "Original Name");
+        var newDescription = "Updated description for the shopping list";
+        var updateDto = ShoppingListUpdateDtoBuilder.Default()
+            .WithName("Updated Name")
+            .WithDescription(newDescription)
+            .Build();
+
+        // Act
+        var response = await Client.PutAsJsonAsync($"/api/shopping-list/{list.Id}", updateDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var updatedList = await response.Content.ReadFromJsonAsync<ShoppingListWithItemsDto>();
+        
+        Assert.NotNull(updatedList);
+        Assert.Equal("Updated Name", updatedList.Name);
+        Assert.Equal(newDescription, updatedList.Description);
+    }
+
+    [Fact]
+    public async Task PUT_WithNullDescription_ClearsDescription()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var createDto = ShoppingListCreationDtoBuilder.Default()
+            .WithName("Original Name")
+            .WithDescription("Original description")
+            .Build();
+        
+        AuthenticateAs(userId);
+        var createResponse = await Client.PostAsJsonAsync("/api/shopping-list", createDto);
+        var createdList = await createResponse.Content.ReadFromJsonAsync<ShoppingListDto>();
+        
+        var updateDto = ShoppingListUpdateDtoBuilder.Default()
+            .WithName("Updated Name")
+            .WithDescription(null)
+            .Build();
+
+        // Act
+        var response = await Client.PutAsJsonAsync($"/api/shopping-list/{createdList!.Id}", updateDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var updatedList = await response.Content.ReadFromJsonAsync<ShoppingListWithItemsDto>();
+        
+        Assert.NotNull(updatedList);
+        Assert.Equal("Updated Name", updatedList.Name);
+        Assert.Null(updatedList.Description);
+    }
+
+    [Fact]
+    public async Task PUT_WithDescriptionTooLong_Returns400BadRequest()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var list = await CreateShoppingListAsync(userId, "Original Name");
+        var longDescription = new string('b', 501);
+        var updateDto = ShoppingListUpdateDtoBuilder.Default()
+            .WithName("Updated Name")
+            .WithDescription(longDescription)
+            .Build();
+
+        // Act
+        var response = await Client.PutAsJsonAsync($"/api/shopping-list/{list.Id}", updateDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PUT_UpdatesTimestampButPreservesCreatedAt()
+    {
+        // Arrange
+        var userId = TestConstants.Users.TestUser1;
+        var createDto = ShoppingListCreationDtoBuilder.Default()
+            .WithName("Original Name")
+            .WithDescription("Original description")
+            .Build();
+        
+        AuthenticateAs(userId);
+        var createResponse = await Client.PostAsJsonAsync("/api/shopping-list", createDto);
+        var createdList = await createResponse.Content.ReadFromJsonAsync<ShoppingListDto>();
+        
+        // Wait a moment to ensure UpdatedAt will be different
+        await Task.Delay(1000);
+        
+        var beforeUpdate = DateTime.UtcNow.AddSeconds(-1);
+        var updateDto = ShoppingListUpdateDtoBuilder.Default()
+            .WithName("Updated Name")
+            .WithDescription("Updated description")
+            .Build();
+
+        // Act
+        var response = await Client.PutAsJsonAsync($"/api/shopping-list/{createdList!.Id}", updateDto);
+        var afterUpdate = DateTime.UtcNow.AddSeconds(1);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var updatedList = await response.Content.ReadFromJsonAsync<ShoppingListWithItemsDto>();
+        
+        Assert.NotNull(updatedList);
+        
+        // CreatedAt should remain unchanged
+        Assert.Equal(createdList.CreatedAt, updatedList.CreatedAt);
+        
+        // UpdatedAt should be updated and within reasonable bounds
+        Assert.True(updatedList.UpdatedAt > beforeUpdate && updatedList.UpdatedAt < afterUpdate);
+        
+        // UpdatedAt should be after CreatedAt
+        Assert.True(updatedList.UpdatedAt > updatedList.CreatedAt);
     }
 
     #endregion

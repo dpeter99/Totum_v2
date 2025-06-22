@@ -9,6 +9,7 @@ namespace Cellarium.Tests.Infrastructure;
 public class ShoppingListCreationDtoBuilder
 {
     private string _name = "Test Shopping List";
+    private string? _description = null;
 
     public ShoppingListCreationDtoBuilder WithName(string name)
     {
@@ -16,9 +17,15 @@ public class ShoppingListCreationDtoBuilder
         return this;
     }
 
+    public ShoppingListCreationDtoBuilder WithDescription(string? description)
+    {
+        _description = description;
+        return this;
+    }
+
     public ShoppingListCreationDto Build()
     {
-        return new ShoppingListCreationDto { Name = _name };
+        return new ShoppingListCreationDto { Name = _name, Description = _description };
     }
 
     public static ShoppingListCreationDtoBuilder Default() => new();
@@ -32,6 +39,7 @@ public class ShoppingListCreationDtoBuilder
 public class ShoppingListUpdateDtoBuilder
 {
     private string _name = "Updated Shopping List";
+    private string? _description = null;
 
     public ShoppingListUpdateDtoBuilder WithName(string name)
     {
@@ -39,9 +47,15 @@ public class ShoppingListUpdateDtoBuilder
         return this;
     }
 
+    public ShoppingListUpdateDtoBuilder WithDescription(string? description)
+    {
+        _description = description;
+        return this;
+    }
+
     public ShoppingListUpdateDto Build()
     {
-        return new ShoppingListUpdateDto { Name = _name };
+        return new ShoppingListUpdateDto { Name = _name, Description = _description };
     }
 
     public static ShoppingListUpdateDtoBuilder Default() => new();

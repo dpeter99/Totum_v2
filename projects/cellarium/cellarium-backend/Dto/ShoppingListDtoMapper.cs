@@ -16,6 +16,9 @@ public static class ShoppingListDtoMapper
         {
             Id = shoppingList.Id.ToString(),
             Name = shoppingList.Name,
+            Description = shoppingList.Description,
+            CreatedAt = shoppingList.CreatedAt,
+            UpdatedAt = shoppingList.UpdatedAt,
             items = shoppingList.Items.Select(i => i.ToDto())
         };
     }
@@ -25,11 +28,13 @@ public static class ShoppingListDtoMapper
         return new ShoppingList()
         {
             Name = shoppingList.Name,
+            Description = shoppingList.Description,
         };
     }
     
     public static void UpdateFromDto(this ShoppingList shoppingList, ShoppingListUpdateDto updateDto)
     {
         shoppingList.Name = updateDto.Name;
+        shoppingList.Description = updateDto.Description;
     }
 }

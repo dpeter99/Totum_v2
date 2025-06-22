@@ -13,5 +13,12 @@ public class ShoppingList
     [MaxLength(100)]
     public string Name { get; set; }
     
+    [MaxLength(500)]
+    public string? Description { get; set; }
+    
+    public DateTime CreatedAt { get; set; }
+    
+    public DateTime UpdatedAt { get; set; }
+    
     public List<ShoppingListItem> Items { get; set; } = new List<ShoppingListItem>();
 }
