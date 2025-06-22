@@ -42,7 +42,7 @@ public class TestApplicationFactory<TProgram> : WebApplicationFactory<TProgram> 
             EnsureTestDatabaseCreated(services);
         });
 
-        builder.UseEnvironment("Testing");
+        builder.UseEnvironment("Development");
     }
 
     private static void RemoveService<T>(IServiceCollection services)
