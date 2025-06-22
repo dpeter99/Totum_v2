@@ -4,6 +4,7 @@ using cellarium_backend.Services;
 using cellarium_backend.Services.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,3 +62,10 @@ app.MapControllers();
 
 
 app.Run();
+
+public static class ActivityHelper
+{
+    public static ActivitySource Source = new ActivitySource("cellarium-backend");
+}
+
+public partial class Program { }
