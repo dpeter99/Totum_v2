@@ -491,7 +491,7 @@ public class ShoppingListEndpointTests : ApiTestBase
         // Verify list name was not changed
         AuthenticateAs(user1);
         var verifyResponse = await GetShoppingListAsync(user1List.Id, user1);
-        Assert.Equal(TestConstants.ShoppingLists.GroceryList, verifyResponse.Name);
+        Assert.Equal(user1List.Name, verifyResponse.Name);
     }
 
     [Fact]

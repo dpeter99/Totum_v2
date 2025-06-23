@@ -57,13 +57,18 @@ public abstract class ApiTestBase : IClassFixture<TestApplicationFactory<Program
     /// Creates a shopping list via API and returns the created list
     /// </summary>
     protected async Task<ShoppingListDto> CreateShoppingListAsync(
-        string userId = TestConstants.Users.TestUser1,
+        string? userId = null,
         string? listName = null)
     {
-        AuthenticateAs(userId);
+        // Generate unique user ID if not provided to avoid conflicts
+        var actualUserId = userId ?? $"test-user-{Guid.NewGuid().ToString()[..8]}";
+        AuthenticateAs(actualUserId);
 
+        // Generate unique name to avoid duplicate validation issues
+        var uniqueName = listName ?? $"{TestConstants.ShoppingLists.GroceryList} {Guid.NewGuid().ToString()[..8]}";
+        
         var createDto = ShoppingListCreationDtoBuilder.Default()
-            .WithName(listName ?? TestConstants.ShoppingLists.GroceryList)
+            .WithName(uniqueName)
             .Build();
 
         var response = await Client.PostAsJsonAsync("/api/shopping-list", createDto);
@@ -78,10 +83,12 @@ public abstract class ApiTestBase : IClassFixture<TestApplicationFactory<Program
     /// </summary>
     protected async Task<ShoppingListItemDto> CreateShoppingListItemAsync(
         string shoppingListId,
-        string userId = TestConstants.Users.TestUser1,
+        string? userId = null,
         string? itemName = null)
     {
-        AuthenticateAs(userId);
+        // Generate unique user ID if not provided to avoid conflicts
+        var actualUserId = userId ?? $"test-user-{Guid.NewGuid().ToString()[..8]}";
+        AuthenticateAs(actualUserId);
 
         var createDto = ShoppingListItemCreationDtoBuilder.Default()
             .WithName(itemName ?? TestConstants.Items.Milk)
@@ -97,9 +104,11 @@ public abstract class ApiTestBase : IClassFixture<TestApplicationFactory<Program
     /// <summary>
     /// Gets all shopping lists for the authenticated user
     /// </summary>
-    protected async Task<ShoppingListDto[]> GetShoppingListsAsync(string userId = TestConstants.Users.TestUser1)
+    protected async Task<ShoppingListDto[]> GetShoppingListsAsync(string? userId = null)
     {
-        AuthenticateAs(userId);
+        // Generate unique user ID if not provided to avoid conflicts
+        var actualUserId = userId ?? $"test-user-{Guid.NewGuid().ToString()[..8]}";
+        AuthenticateAs(actualUserId);
 
         var response = await Client.GetAsync("/api/shopping-list");
         response.EnsureSuccessStatusCode();
@@ -113,9 +122,11 @@ public abstract class ApiTestBase : IClassFixture<TestApplicationFactory<Program
     /// </summary>
     protected async Task<ShoppingListWithItemsDto> GetShoppingListAsync(
         string listId, 
-        string userId = TestConstants.Users.TestUser1)
+        string? userId = null)
     {
-        AuthenticateAs(userId);
+        // Generate unique user ID if not provided to avoid conflicts
+        var actualUserId = userId ?? $"test-user-{Guid.NewGuid().ToString()[..8]}";
+        AuthenticateAs(actualUserId);
 
         var response = await Client.GetAsync($"/api/shopping-list/{listId}");
         response.EnsureSuccessStatusCode();

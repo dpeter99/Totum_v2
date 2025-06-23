@@ -20,5 +20,7 @@ public class ShoppingList
     
     public DateTime UpdatedAt { get; set; }
     
+    public bool IsDeleted { get; set; } = false;
+    
     public List<ShoppingListItem> Items { get; set; } = new List<ShoppingListItem>();
 }

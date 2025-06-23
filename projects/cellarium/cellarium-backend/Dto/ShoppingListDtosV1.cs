@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using cellarium_backend.Models;
+using cellarium_backend.Validation;
 
 namespace cellarium_backend.Dto;
 
@@ -35,7 +36,8 @@ public class ShoppingListWithItemsDto : ShoppingListDto
 public class ShoppingListCreationDto
 {
     [Required(ErrorMessage = "Shopping list name is required")]
-    [StringLength(100, MinimumLength = 1, ErrorMessage = "Shopping list name must be between 1 and 100 characters")]
+    [NotWhitespaceOnly]
+    [StringLength(100, ErrorMessage = "Shopping list name cannot exceed 100 characters")]
     public string Name { get; set; }
     
     [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters")]
@@ -45,7 +47,8 @@ public class ShoppingListCreationDto
 public class ShoppingListUpdateDto
 {
     [Required(ErrorMessage = "Shopping list name is required")]
-    [StringLength(100, MinimumLength = 1, ErrorMessage = "Shopping list name must be between 1 and 100 characters")]
+    [NotWhitespaceOnly]
+    [StringLength(100, ErrorMessage = "Shopping list name cannot exceed 100 characters")]
     public string Name { get; set; }
     
     [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters")]

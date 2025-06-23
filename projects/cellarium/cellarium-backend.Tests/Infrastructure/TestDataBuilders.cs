@@ -8,7 +8,7 @@ namespace Cellarium.Tests.Infrastructure;
 /// </summary>
 public class ShoppingListCreationDtoBuilder
 {
-    private string _name = "Test Shopping List";
+    private string _name = $"Test Shopping List {Guid.NewGuid().ToString()[..8]}";
     private string? _description = null;
 
     public ShoppingListCreationDtoBuilder WithName(string name)
@@ -30,7 +30,7 @@ public class ShoppingListCreationDtoBuilder
 
     public static ShoppingListCreationDtoBuilder Default() => new();
     
-    public static ShoppingListCreationDto GetBasic() => Default().WithName("Test List").Build();
+    public static ShoppingListCreationDto GetBasic() => Default().WithName($"Test List {Guid.NewGuid().ToString()[..8]}").Build();
 }
 
 /// <summary>
@@ -38,7 +38,7 @@ public class ShoppingListCreationDtoBuilder
 /// </summary>
 public class ShoppingListUpdateDtoBuilder
 {
-    private string _name = "Updated Shopping List";
+    private string _name = $"Updated Shopping List {Guid.NewGuid().ToString()[..8]}";
     private string? _description = null;
 
     public ShoppingListUpdateDtoBuilder WithName(string name)

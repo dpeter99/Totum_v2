@@ -698,7 +698,7 @@
         "properties": {
           "name": {
             "maxLength": 100,
-            "minLength": 1,
+            "minLength": 0,
             "type": "string"
           },
           "description": {
@@ -772,7 +772,7 @@
         "properties": {
           "name": {
             "maxLength": 100,
-            "minLength": 1,
+            "minLength": 0,
             "type": "string"
           },
           "description": {

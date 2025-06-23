@@ -2,6 +2,7 @@ using cellarium_backend;
 using cellarium_backend.Models;
 using cellarium_backend.Services;
 using cellarium_backend.Services.Auth;
+using cellarium_backend.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -22,11 +23,7 @@ builder.Services.AddAuthentication()
     {
         options.Authority = "https://localhost:5001";
         options.TokenValidationParameters.ValidateAudience = false;
-        options.Events.OnTokenValidated = context =>
-        {
-            
-            return Task.CompletedTask;
-        };
+        //options.Events.OnTokenValidated = context => Task.CompletedTask;
     });
 
 builder.Services.AddAuthorization(options =>
@@ -49,6 +46,9 @@ app.UseCors(config =>
 {
     config.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
 });
+
+// Add business logic exception handling middleware
+app.UseMiddleware<BusinessLogicExceptionMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
