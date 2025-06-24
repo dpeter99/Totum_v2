@@ -33,10 +33,6 @@
       <ProjectReference Include="..\..\RootHost.ServiceDefaults\RootHost.ServiceDefaults.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Api\v1\" />
-    </ItemGroup>
-
     <PropertyGroup>
         <OpenApiDocumentsDirectory>.</OpenApiDocumentsDirectory>
     </PropertyGroup>

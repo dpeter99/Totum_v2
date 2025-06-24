@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace cellarium_backend.Validation;
+namespace cellarium_backend.Shared.Validation;
 
 /// <summary>
 /// Validation attribute that ensures a string is not composed entirely of whitespace characters.

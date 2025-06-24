@@ -1,7 +1,7 @@
-using cellarium_backend.Dto;
-using cellarium_backend.Models;
+using cellarium_backend.Features.ShoppingLists.Dto;
+using cellarium_backend.Features.ShoppingLists.Models;
 
-namespace cellarium_backend.Services;
+namespace cellarium_backend.Features.ShoppingLists.Services;
 
 public interface IShoppingListItemService
 {

@@ -1,4 +1,4 @@
-using cellarium_backend.Dto;
+using cellarium_backend.Features.ShoppingLists.Dto;
 
 namespace Cellarium.Tests.Infrastructure;
 

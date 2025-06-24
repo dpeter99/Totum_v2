@@ -1,7 +1,7 @@
-using cellarium_backend.Dto;
+using cellarium_backend.Features.ShoppingLists.Dto;
 using System.ComponentModel.DataAnnotations;
 
-namespace cellarium_backend.Models;
+namespace cellarium_backend.Features.ShoppingLists.Models;
 
 public class ShoppingListItem
 {

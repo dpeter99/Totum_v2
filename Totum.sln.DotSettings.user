@@ -44,6 +44,9 @@
     &lt;TestId&gt;xUnit::3DD932BC-59F1-4523-BB45-3C275E6E9360::net9.0::Cellarium.Tests.Api.ShoppingListEndpointTests.DELETE_WithNonExistentId_Returns404&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::3DD932BC-59F1-4523-BB45-3C275E6E9360::net9.0::Cellarium.Tests.Api.ShoppingListEndpointTests.DELETE_EmitsCorrectTelemetry&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::3DD932BC-59F1-4523-BB45-3C275E6E9360::net9.0::Cellarium.Tests.Api.ShoppingListItemEndpointTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::3DD932BC-59F1-4523-BB45-3C275E6E9360::net9.0::Cellarium.Tests.Api.ShoppingListBusinessLogicTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::3DD932BC-59F1-4523-BB45-3C275E6E9360::net9.0::Cellarium.Tests.Api.OpenApiEndpointTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::3DD932BC-59F1-4523-BB45-3C275E6E9360::net9.0::Cellarium.Tests.Api.ShoppingListEndpointTests&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	</wpf:ResourceDictionary>

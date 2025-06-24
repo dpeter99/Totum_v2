@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using cellarium_backend.Models;
-using cellarium_backend.Validation;
+using cellarium_backend.Features.ShoppingLists.Models;
+using cellarium_backend.Shared.Validation;
 
-namespace cellarium_backend.Dto;
+namespace cellarium_backend.Features.ShoppingLists.Dto;
 
 public class ShoppingListDto
 {

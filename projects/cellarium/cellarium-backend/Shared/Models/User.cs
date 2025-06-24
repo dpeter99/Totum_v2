@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
+using cellarium_backend.Features.ShoppingLists.Models;
 
-namespace cellarium_backend.Models;
+namespace cellarium_backend.Shared.Models;
 
 public class User
 {

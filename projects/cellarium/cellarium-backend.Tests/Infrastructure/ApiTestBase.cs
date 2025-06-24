@@ -1,7 +1,7 @@
 using System.Net.Http.Json;
 using System.Net.Http.Headers;
 using Microsoft.Extensions.DependencyInjection;
-using cellarium_backend.Dto;
+using cellarium_backend.Features.ShoppingLists.Dto;
 
 namespace Cellarium.Tests.Infrastructure;
 

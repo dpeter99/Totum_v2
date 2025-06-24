@@ -1,7 +1,6 @@
 using cellarium_backend;
-using cellarium_backend.Models;
-using cellarium_backend.Services;
-using cellarium_backend.Services.Auth;
+using cellarium_backend.Features.ShoppingLists.Services;
+using cellarium_backend.Shared.Services.Auth;
 using cellarium_backend.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;

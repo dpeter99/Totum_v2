@@ -1,4 +1,5 @@
-using cellarium_backend.Models;
+using cellarium_backend.Features.ShoppingLists.Models;
+using cellarium_backend.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace cellarium_backend;

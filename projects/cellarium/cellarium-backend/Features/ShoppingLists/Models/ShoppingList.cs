@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace cellarium_backend.Models;
+namespace cellarium_backend.Features.ShoppingLists.Models;
 
 public class ShoppingList
 {

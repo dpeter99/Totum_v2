@@ -1,9 +1,9 @@
 using System.Security.Claims;
-using cellarium_backend.Models;
+using cellarium_backend.Shared.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
-namespace cellarium_backend.Services.Auth;
+namespace cellarium_backend.Shared.Services.Auth;
 
 public class UserService() : IUserService
 {

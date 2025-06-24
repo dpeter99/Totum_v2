@@ -1,11 +1,11 @@
-using cellarium_backend.Dto;
-using cellarium_backend.Services;
-using cellarium_backend.Services.Auth;
+using cellarium_backend.Features.ShoppingLists.Dto;
+using cellarium_backend.Features.ShoppingLists.Services;
+using cellarium_backend.Shared.Services.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace cellarium_backend.Controllers
+namespace cellarium_backend.Features.ShoppingLists.Controllers
 {
     [Route("api/shopping-list")]
     [ApiController]
