@@ -124,8 +124,8 @@ public class ShoppingListItemEndpointTests : ApiTestBase
         // Act
         var response = await Client.PostAsJsonAsync($"/api/shopping-list/{list.Id}/item", createDto);
 
-        // Assert - Currently creates due to no validation
-        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        // Assert - Should reject empty names due to validation
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Theory]

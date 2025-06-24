@@ -28,6 +28,20 @@ public class CellariumDbContext: DbContext
         modelBuilder.Entity<ShoppingList>()
             .Property(e => e.UpdatedAt)
             .HasDefaultValueSql("GETUTCDATE()");
+            
+        // Configure ShoppingListItem
+        modelBuilder.Entity<ShoppingListItem>()
+            .Property(e => e.CreatedAt)
+            .HasDefaultValueSql("GETUTCDATE()");
+            
+        modelBuilder.Entity<ShoppingListItem>()
+            .Property(e => e.IsCompleted)
+            .HasDefaultValue(false);
+            
+        // Configure decimal precision for Quantity
+        modelBuilder.Entity<ShoppingListItem>()
+            .Property(e => e.Quantity)
+            .HasPrecision(10, 3); // Up to 9999999.999
     }
 
     public override int SaveChanges()
@@ -44,10 +58,11 @@ public class CellariumDbContext: DbContext
 
     private void UpdateTimestamps()
     {
-        var entries = ChangeTracker.Entries()
+        // Handle ShoppingList timestamps
+        var shoppingListEntries = ChangeTracker.Entries()
             .Where(e => e.Entity is ShoppingList && (e.State == EntityState.Added || e.State == EntityState.Modified));
 
-        foreach (var entry in entries)
+        foreach (var entry in shoppingListEntries)
         {
             var entity = (ShoppingList)entry.Entity;
             
@@ -61,6 +76,20 @@ public class CellariumDbContext: DbContext
                 entity.UpdatedAt = DateTime.UtcNow;
                 // Prevent CreatedAt from being modified
                 entry.Property(nameof(entity.CreatedAt)).IsModified = false;
+            }
+        }
+        
+        // Handle ShoppingListItem timestamps
+        var itemEntries = ChangeTracker.Entries()
+            .Where(e => e.Entity is ShoppingListItem && e.State == EntityState.Added);
+
+        foreach (var entry in itemEntries)
+        {
+            var entity = (ShoppingListItem)entry.Entity;
+            
+            if (entry.State == EntityState.Added)
+            {
+                entity.CreatedAt = DateTime.UtcNow;
             }
         }
     }
