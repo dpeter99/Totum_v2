@@ -8,9 +8,9 @@ public class ShoppingListDto
 {
     [Required]
     [BrandedType("ShoppingListId")]
-    public string Id { get; set; }
+    public required string Id { get; set; }
     [Required]
-    public string Name { get; set; }
+    public required string Name { get; set; }
     public string? Description { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
@@ -30,7 +30,7 @@ public class ShoppingListDto
 
 public class ShoppingListWithItemsDto : ShoppingListDto
 {
-    public IEnumerable<ShoppingListItemDto> items { get; set; }
+    public required IEnumerable<ShoppingListItemDto> items { get; set; }
 }
 
 public class ShoppingListCreationDto
@@ -38,7 +38,7 @@ public class ShoppingListCreationDto
     [Required(ErrorMessage = "Shopping list name is required")]
     [NotWhitespaceOnly]
     [StringLength(100, ErrorMessage = "Shopping list name cannot exceed 100 characters")]
-    public string Name { get; set; }
+    public required string Name { get; set; }
     
     [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters")]
     public string? Description { get; set; }
@@ -49,7 +49,7 @@ public class ShoppingListUpdateDto
     [Required(ErrorMessage = "Shopping list name is required")]
     [NotWhitespaceOnly]
     [StringLength(100, ErrorMessage = "Shopping list name cannot exceed 100 characters")]
-    public string Name { get; set; }
+    public required string Name { get; set; }
     
     [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters")]
     public string? Description { get; set; }

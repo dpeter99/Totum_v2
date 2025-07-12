@@ -2,6 +2,7 @@ using cellarium_backend.Features.ShoppingLists.Dto;
 using cellarium_backend.Features.ShoppingLists.Models;
 using cellarium_backend.Exceptions;
 using System.Diagnostics;
+using cellarium_backend.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace cellarium_backend.Features.ShoppingLists.Services;
@@ -10,7 +11,6 @@ public interface IShoppingListService
 {
     IEnumerable<ShoppingList?> GetShoppingLists(string userId);
     ShoppingList? GetShoppingList(Guid id, string userId);
-    Task<ShoppingList?> AddShoppingList(ShoppingListCreationDto shoppingList);
     Task<ShoppingList?> AddShoppingList(ShoppingListCreationDto shoppingList, string userId);
     Task<bool> DeleteShoppingList(Guid id, string userId);
     Task<ShoppingList?> UpdateShoppingList(Guid id, ShoppingListUpdateDto shoppingList, string userId);
@@ -47,26 +47,15 @@ public class ShoppingListService(CellariumDbContext db, IWebHostEnvironment envi
         return list;
     }
 
-    public async Task<ShoppingList?> AddShoppingList(ShoppingListCreationDto shoppingList)
-    {
-        // Whitespace validation is now handled by validation attributes
-        
-        var newList = shoppingList.ToShoppingList();
-        var res = await db.ShoppingList.AddAsync(newList);
-        await db.SaveChangesAsync();
-        return res.Entity;
-    }
-
     public async Task<ShoppingList?> AddShoppingList(ShoppingListCreationDto shoppingList, string userId)
     {
         using var span = ActivityHelper.Source.StartActivity("db-add-shopping-list");
         span?.AddTag("shopping_list.name", shoppingList.Name);
         span?.AddTag("user.id", userId);
         
-        // Whitespace validation is now handled by validation attributes
         await ValidateNoDuplicateName(shoppingList.Name, userId);
         
-        var newList = shoppingList.ToShoppingList();
+        var newList = shoppingList.ToShoppingList( new UserId(userId) );
         newList.UserId = userId;  // Set the user ID
         var res = await db.ShoppingList.AddAsync(newList);
         await db.SaveChangesAsync();

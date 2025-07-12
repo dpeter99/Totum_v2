@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "/home/dpeter99/Documents/Projects/Totum/totum_v2/Totum/projects/cellarium/cellarium-backend"
+      "url": "/var/home/dpeter99/Documents/Projects/Totum/totum_v2/Totum/projects/cellarium/cellarium-backend"
     }
   ],
   "paths": {
@@ -1073,6 +1073,9 @@
   "components": {
     "schemas": {
       "BulkItemCreation": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -1122,6 +1125,10 @@
         }
       },
       "BulkItemUpdate": {
+        "required": [
+          "id",
+          "name"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -1376,6 +1383,11 @@
         }
       },
       "ShoppingListItemDto": {
+        "required": [
+          "id",
+          "name",
+          "addedByUserId"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -1485,6 +1497,7 @@
       },
       "ShoppingListWithItemsDto": {
         "required": [
+          "items",
           "id",
           "name"
         ],

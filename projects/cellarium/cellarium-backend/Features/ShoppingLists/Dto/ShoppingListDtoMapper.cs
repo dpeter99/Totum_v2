@@ -1,4 +1,5 @@
 using cellarium_backend.Features.ShoppingLists.Models;
+using cellarium_backend.Shared.Models;
 
 namespace cellarium_backend.Features.ShoppingLists.Dto;
 
@@ -22,10 +23,11 @@ public static class ShoppingListDtoMapper
         };
     }
 
-    public static ShoppingList ToShoppingList(this ShoppingListCreationDto shoppingList)
+    public static ShoppingList ToShoppingList(this ShoppingListCreationDto shoppingList, UserId userId)
     {
         return new ShoppingList()
         {
+            UserId = userId.Value,
             Name = shoppingList.Name,
             Description = shoppingList.Description,
         };

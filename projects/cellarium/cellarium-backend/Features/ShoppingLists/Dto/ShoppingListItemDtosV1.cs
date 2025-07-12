@@ -5,14 +5,14 @@ namespace cellarium_backend.Features.ShoppingLists.Dto;
 
 public class ShoppingListItemDto
 {
-    public string id { get; set; } = string.Empty;
-    public string name { get; set; } = string.Empty;
+    public required string id { get; set; }
+    public required string name { get; set; }
     public decimal? quantity { get; set; }
     public string? unit { get; set; }
     public string? notes { get; set; }
     public string? category { get; set; }
     public bool isCompleted { get; set; }
-    public string addedByUserId { get; set; } = string.Empty;
+    public required string addedByUserId { get; set; }
     public DateTime createdAt { get; set; }
     public int? order { get; set; }
 }
@@ -22,7 +22,7 @@ public class ShoppingListItemCreationDto
     [Required(ErrorMessage = "Item name is required")]
     [NotWhitespaceOnly]
     [StringLength(100, ErrorMessage = "Item name cannot exceed 100 characters")]
-    public string Name { get; set; } = string.Empty;
+    public required string Name { get; set; }
     
     [Range(0.01, 999999.999, ErrorMessage = "Quantity must be a positive number")]
     public decimal? Quantity { get; set; }
@@ -46,7 +46,7 @@ public class ShoppingListItemUpdateDto
     [Required(ErrorMessage = "Item name is required")]
     [NotWhitespaceOnly]
     [StringLength(100, ErrorMessage = "Item name cannot exceed 100 characters")]
-    public string Name { get; set; } = string.Empty;
+    public required string Name { get; set; }
     
     [Range(0.01, 999999.999, ErrorMessage = "Quantity must be a positive number")]
     public decimal? Quantity { get; set; }
@@ -72,7 +72,7 @@ public class BulkShoppingListItemCreationDto
     [Required(ErrorMessage = "Items list is required")]
     [MinLength(1, ErrorMessage = "At least one item must be provided")]
     [MaxLength(50, ErrorMessage = "Cannot add more than 50 items at once")]
-    public List<BulkItemCreation> Items { get; set; } = new();
+    public required List<BulkItemCreation> Items { get; set; }
 }
 
 public class BulkShoppingListItemUpdateDto
@@ -80,13 +80,13 @@ public class BulkShoppingListItemUpdateDto
     [Required(ErrorMessage = "Updates list is required")]
     [MinLength(1, ErrorMessage = "At least one update must be provided")]
     [MaxLength(50, ErrorMessage = "Cannot update more than 50 items at once")]
-    public List<BulkItemUpdate> Updates { get; set; } = new();
+    public required List<BulkItemUpdate> Updates { get; set; }
 }
 
 // Simplified DTOs for bulk operations without strict validation (handled at service level)
 public class BulkItemCreation
 {
-    public string Name { get; set; } = string.Empty;
+    public required string Name { get; set; }
     public decimal? Quantity { get; set; }
     public string? Unit { get; set; }
     public string? Notes { get; set; }
@@ -97,8 +97,8 @@ public class BulkItemCreation
 
 public class BulkItemUpdate
 {
-    public string Id { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
+    public required string Id { get; set; }
+    public required string Name { get; set; }
     public decimal? Quantity { get; set; }
     public string? Unit { get; set; }
     public string? Notes { get; set; }
@@ -112,7 +112,7 @@ public class BulkShoppingListItemDeleteDto
     [Required(ErrorMessage = "Item IDs list is required")]
     [MinLength(1, ErrorMessage = "At least one item ID must be provided")]
     [MaxLength(50, ErrorMessage = "Cannot delete more than 50 items at once")]
-    public List<string> ItemIds { get; set; } = new();
+    public required List<string> ItemIds { get; set; }
 }
 
 public class BulkOperationResultDto
@@ -128,7 +128,7 @@ public class BulkOperationResultDto
 public class ItemReorderDto
 {
     [Required(ErrorMessage = "Item ID is required")]
-    public string ItemId { get; set; } = string.Empty;
+    public required string ItemId { get; set; }
     
     [Required(ErrorMessage = "New order position is required")]
     [Range(0, int.MaxValue, ErrorMessage = "Order must be a non-negative number")]
@@ -140,5 +140,5 @@ public class BulkItemReorderDto
     [Required(ErrorMessage = "Reorders list is required")]
     [MinLength(1, ErrorMessage = "At least one reorder must be provided")]
     [MaxLength(50, ErrorMessage = "Cannot reorder more than 50 items at once")]
-    public List<ItemReorderDto> Reorders { get; set; } = new();
+    public required List<ItemReorderDto> Reorders { get; set; }
 }
